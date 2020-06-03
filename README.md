@@ -18,5 +18,18 @@ na  ficha Atividade Rural  da Declaração de Ajuste  Anual  do  Imposto de Rend
 Os dados da atividade rural desenvolvida no exterior devem ser informados diretamente no campo Atividade Rural
 da DIRPF, não sendo lançados no LCDPR do ano-calendário de 2019.O LCDPR deverá ser assinado digitalmente,
 por meio de certificado digital válido, emitido por entidade credenciada pela Infraestrutura de 
-Chaves Públicas Brasileira (ICP-Brasil), a fim de garantir a autoria do documento digital. 
+Chaves Públicas Brasileira (ICP-Brasil), a fim de garantir a autoria do documento digital.
+
+Exemplo gerado em teste:
+```
+0000|LCDPR|0001|11111111191|JOSÉ DA SILVA|0|0|01012018|31122018
+0010|11112222333344445555666677778888999900001|1
+0030|RUA TESTE|1234|BLOCO Z SALA 301|BAIRRO LCDPR|DF|5300108|71000000|6133333333|testeLCDPR@LCDPR.com.br
+0040|001|BRA|BRL|12345678|123456789012|12345678901234|Fazenda Tudo Certo|Rodovia BR 999, Km 3000|Distrito do Meio|DF|5300108|71000000|2|0500
+0045|002|3|12345678912|JOÃO DE SOUSA|052
+0050|001|BRA|999|Banco LCDPR|1234|0000000123456789
+Q100|02012018|001|001|321|1|Venda de 100 sacas de milho|12345678000112|1|1000000|000|1100000
+Q200|BRA|012018|10000000|8500000|1500000
+9999|8007
+``` 
 
