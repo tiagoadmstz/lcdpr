@@ -1,0 +1,8 @@
+
+9
+java:S11485"#Use a logger to log this exception.(Ç’Çê
+m
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 17 to the 15 allowed.(ÄñµŞÿÿÿÿÿ
+>	java:S108")Either remove or fill this block of code.(”ı¾
+>	java:S108-")Either remove or fill this block of code.(”ı¾
+V	java:S125#"<This block of commented-out lines of code should be removed.(ãôï©şÿÿÿÿ
