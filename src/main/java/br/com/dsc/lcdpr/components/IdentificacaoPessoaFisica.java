@@ -8,6 +8,7 @@ package br.com.dsc.lcdpr.components;
 import br.com.dsc.lcdpr.enumerated.INICIO_PERIODO;
 import br.com.dsc.lcdpr.enumerated.SITUACAO_ESPECIAL;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
+import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
 import java.io.Serializable;
@@ -30,13 +31,18 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
     @Builder.Default
     private String nome_esc = "LCDPR"; //t = 5, o = sim, p = LCDPR
     @Builder.Default
+    @SerializedName("cod_ver")
     private String cod_versao = "0001"; //t = 4, o = sim, p = 0001
     private Long cpf; //t = 11, o = sim
     private String nome;
     private INICIO_PERIODO ind_sit_ini_per;
+    @SerializedName("sit_especial")
     private SITUACAO_ESPECIAL situacao_especial;
+    @SerializedName("dt_sit_esp")
     private Integer dataSituacaoEspecial; //t = 8, o = não
+    @SerializedName("dt_ini")
     private LocalDate dataInicioPeriodo; //t = 8, o = sim
+    @SerializedName("dt_fin")
     private LocalDate dataFinalPeriodo; //t = 8, o = sim
 
 }
