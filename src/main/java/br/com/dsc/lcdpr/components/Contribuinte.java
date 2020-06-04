@@ -6,6 +6,8 @@
 package br.com.dsc.lcdpr.components;
 
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
 import java.io.Serializable;
@@ -25,12 +27,16 @@ public class Contribuinte implements Serializable, LcdprHandler {
     @Builder.Default
     private String reg = "0030"; //t = 4, o = sim, p = 0030
     private String endereco; //t = 150, o = sim
+    @SerializedName("num")
     private String numero; //t = 6, o = sim
+    @SerializedName("compl")
     private String complemento; //t = 50, o = não
     private String bairro; //t = 50, o = sim
-    private String uf; //t = 2, o = sim
-    private String codigo_municipio; //t = 7, o = sim
+    private String uf; //t = 2, o = sim  (http://sped.rfb.gov.br/pasta/show/1932)
+    @SerializedName("cod_mun")
+    private String codigo_municipio; //t = 7, o = sim http://sped.rfb.gov.br/pasta/show/1932
     private String cep; //t = 8, o = sim
+    @SerializedName("num_tel")
     private Long numero_telefone; //t = 15, o = não
     private String email; //t = 115, o = sim
 
