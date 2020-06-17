@@ -11,7 +11,9 @@ import lombok.*;
 import java.io.Serializable;
 
 /**
- * @author Tiago
+ * 9 - Identifica o Contador e encerra o arquivo digital.
+ *
+ * @author Tiago D.
  */
 @Data
 @Builder

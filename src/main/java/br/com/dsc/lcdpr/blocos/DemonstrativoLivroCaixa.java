@@ -14,7 +14,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author Tiago
+ * Q - Apresenta o demonstrativo do resultado da atividade rural
+ *
+ * @author Tiago D.
  */
 @Data
 @Builder
