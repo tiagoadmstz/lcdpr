@@ -5,34 +5,66 @@
  */
 package br.com.dsc.lcdpr.test;
 
+import br.com.dev.engine.date.Datas;
 import br.com.dsc.lcdpr.blocos.AberturaIdentificacao;
 import br.com.dsc.lcdpr.blocos.DemonstrativoLivroCaixa;
 import br.com.dsc.lcdpr.blocos.EncerramentoArquivo;
-import br.com.dsc.lcdpr.components.ContaBancaria;
-import br.com.dsc.lcdpr.components.Contribuinte;
-import br.com.dsc.lcdpr.components.DemoLivroCaixa;
-import br.com.dsc.lcdpr.components.ExploracaoMedianteContrato;
-import br.com.dsc.lcdpr.components.IdentificacaoPessoaFisica;
-import br.com.dsc.lcdpr.components.ImovelRural;
-import br.com.dsc.lcdpr.components.ParametrosTributacao;
-import br.com.dsc.lcdpr.components.ResumoDemoLivroCaixa;
-import br.com.dsc.lcdpr.enumerated.FORMA_APURACAO;
-import br.com.dsc.lcdpr.enumerated.INICIO_PERIODO;
-import br.com.dsc.lcdpr.enumerated.SITUACAO_ESPECIAL;
-import br.com.dsc.lcdpr.enumerated.TIPO_CONTRAPARTE;
-import br.com.dsc.lcdpr.enumerated.TIPO_DOCUMENTO;
-import br.com.dsc.lcdpr.enumerated.TIPO_EXPLORACAO;
-import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
+import br.com.dsc.lcdpr.components.*;
+import br.com.dsc.lcdpr.enumerated.*;
 import br.com.dsc.lcdpr.lcdpr.LCDPR;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import java.time.LocalDate;
 import java.util.Arrays;
-import org.junit.Test;
 
 /**
- *
  * @author Tiago
  */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LcdprTest {
+
+    @Test
+    @Order(1)
+    public void aberturaIdentificacaoTest() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            //0000|LCDPR|0013|11111111191|JOSÉ DA SILVA|0|0||01012019|31122019
+            IdentificacaoPessoaFisica identificacaoPessoaFisica = IdentificacaoPessoaFisica.builder()
+                    .cpf(11111111191L)
+                    .nome("JOSÉ DA SILVA")
+                    .dataInicioPeriodo(Datas.stringToLocalDate("01/01/2019"))
+                    .dataFinalPeriodo(Datas.stringToLocalDate("01/01/2019"))
+                    .build();
+            //0010|1
+            ParametrosTributacao parametrosTributacao = ParametrosTributacao.builder().build();
+            //0030|RUA TESTE|1234|BLOCO Z SALA 301|BAIRRO LCDPR|DF|5300108|71000000|6133333333|testeLCDPR@LCDPR.com.br
+            Contribuinte contribuinte = Contribuinte.builder()
+                    .endereco("RUA TESTE")
+                    .numero("1234")
+                    .complemento("BLOCO Z SALA 301")
+                    .bairro("BAIRRO LCDPR")
+                    .uf("DF")
+                    .codigoMunicipio("5300108")
+                    .cep("71000000")
+                    .numeroTelefone(6133333333L)
+                    .email("testeLCDPR@LCDPR.com.br")
+                    .build();
+
+            AberturaIdentificacao aberturaIdentificacao = AberturaIdentificacao.builder()
+                    .identificacaoPessoaFisica(identificacaoPessoaFisica)
+                    .parametrosTributacao(parametrosTributacao)
+                    .dadosCadastraisContribuinte(contribuinte)
+                    .build();
+
+            System.out.println(objectMapper.writeValueAsString(aberturaIdentificacao));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     @Test
     public void preenchimentoTest() {
@@ -53,14 +85,14 @@ public class LcdprTest {
         IdentificacaoPessoaFisica Ipf = new IdentificacaoPessoaFisica();
         Ipf.setCpf(11111111191l);
         Ipf.setNome("JOSÉ DA SILVA");
-        Ipf.setInd_sit_ini_per(INICIO_PERIODO.REGULAR);
-        Ipf.setSituacao_especial(SITUACAO_ESPECIAL.NORMAL);
+        Ipf.setIndicadorInicioPeriodo(INICIO_PERIODO.REGULAR);
+        Ipf.setSituacaoEspecial(SITUACAO_ESPECIAL.NORMAL);
         Ipf.setDataInicioPeriodo(LocalDate.of(2018, 1, 1));
         Ipf.setDataFinalPeriodo(LocalDate.of(2018, 12, 31));
         //0010|11112222333344445555666677778888999900001|1
         ParametrosTributacao parametrosTributacao = new ParametrosTributacao();
-        parametrosTributacao.setHashIrrfAnterior("11112222333344445555666677778888999900001");
-        parametrosTributacao.setForma_apuracao(FORMA_APURACAO.LIVRO_CAIXA);
+        //parametrosTributacao.setHashIrrfAnterior("11112222333344445555666677778888999900001");
+        parametrosTributacao.setFormaApuracao(FORMA_APURACAO.LIVRO_CAIXA);
         //0030|RUA TESTE|1234|BLOCO Z SALA 301|BAIRRO LCDPR|DF|5300108|71000000|6133333333|testeLCDPR@LCDPR.com.br
         Contribuinte contribuinte = new Contribuinte();
         contribuinte.setEndereco("RUA TESTE");
@@ -68,9 +100,9 @@ public class LcdprTest {
         contribuinte.setComplemento("BLOCO Z SALA 301");
         contribuinte.setBairro("BAIRRO LCDPR");
         contribuinte.setUf("DF");
-        contribuinte.setCodigo_municipio("5300108");
+        contribuinte.setCodigoMunicipio("5300108");
         contribuinte.setCep("71000000");
-        contribuinte.setNumero_telefone(6133333333l);
+        contribuinte.setNumeroTelefone(6133333333L);
         contribuinte.setEmail("testeLCDPR@LCDPR.com.br");
         //0040|001|BRA|BRL|12345678|123456789012|12345678901234|Fazenda Tudo Certo|Rodovia BR 999, Km 3000|||Distrito do Meio|DF|5300108|71000000|2|0500
         ImovelRural imovelRural = new ImovelRural();
@@ -104,12 +136,12 @@ public class LcdprTest {
         contaBancaria.setNumero_conta("0000000123456789");
 
         AberturaIdentificacao abertura = new AberturaIdentificacao();
-        abertura.setIdentificacao_pessoa_fisica(Ipf);
-        abertura.setParametros_tributacao(parametrosTributacao);
-        abertura.setDados_cadastrais_contribuinte(contribuinte);
-        abertura.setImoveis_rurais(Arrays.asList(imovelRural));
-        abertura.setExploracao_imoveis_rurais(Arrays.asList(exploracao));
-        abertura.setContas_bancarias(Arrays.asList(contaBancaria));
+        abertura.setIdentificacaoPessoaFisica(Ipf);
+        abertura.setParametrosTributacao(parametrosTributacao);
+        abertura.setDadosCadastraisContribuinte(contribuinte);
+        abertura.setImoveisRurais(Arrays.asList(imovelRural));
+        abertura.setExploracaoImoveisRurais(Arrays.asList(exploracao));
+        abertura.setContasBancarias(Arrays.asList(contaBancaria));
         return abertura;
     }
 

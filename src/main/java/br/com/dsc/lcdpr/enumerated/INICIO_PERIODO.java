@@ -5,27 +5,30 @@
  */
 package br.com.dsc.lcdpr.enumerated;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Indicador do Início do Período:
  * 0 – Regular (Início no primeiro dia do ano).
- * 1 – Abertura (Início de atividades no ano-calendário). 
+ * 1 – Abertura (Início de atividades no ano-calendário).
  * 2 – Início de obrigatoriedade da escrituração no curso do ano calendário. (Exemplo:
  * desenquadramento como imune ou isento do IRPF)
  *
  * @author Tiago
  */
 public enum INICIO_PERIODO {
-    
+
     REGULAR(0), ABERTURA(1), OBRIGATORIO_ESCRITURACAO(2);
-    
+
     private final int valor;
 
-    private INICIO_PERIODO(int valor) {
+    INICIO_PERIODO(int valor) {
         this.valor = valor;
     }
 
+    @JsonValue
     public int getValor() {
         return valor;
     }
-    
+
 }

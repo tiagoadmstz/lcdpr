@@ -7,13 +7,19 @@ package br.com.dsc.lcdpr.components;
 
 import br.com.dsc.lcdpr.enumerated.FORMA_APURACAO;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 import java.io.Serializable;
 
 /**
- * @author Tiago
+ * Registro 0010: Parâmetros de Tributação
+ * Apresenta os parâmetros fiscais que identificam quais blocos e registros serão preenchidos.
+ * Ocorrência [1:1]
+ *
+ * @author Tiago D.
  */
 @Data
 @Builder
@@ -21,12 +27,16 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({"registro", "formaApuracao"})
 public class ParametrosTributacao implements Serializable, LcdprHandler {
 
     private static final long serialVersionUID = 901801438322291828L;
     @Builder.Default
-    private String reg = "0010"; //t = 4, o = sim, p = 0010
-    @SerializedName("forma_apur")
-    private FORMA_APURACAO forma_apuracao; //t = 1, o = sim
+    @JsonProperty("reg")
+    private String registro = "0010"; //t = 4, o = sim, p = 0010
+    @Builder.Default
+    @JsonProperty("forma_apur")
+    private FORMA_APURACAO formaApuracao = FORMA_APURACAO.LIVRO_CAIXA; //t = 1, o = sim
 
 }
