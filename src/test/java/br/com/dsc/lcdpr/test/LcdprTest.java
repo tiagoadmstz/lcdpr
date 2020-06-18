@@ -10,19 +10,19 @@ import br.com.dsc.lcdpr.blocos.AberturaIdentificacao;
 import br.com.dsc.lcdpr.blocos.DemonstrativoLivroCaixa;
 import br.com.dsc.lcdpr.blocos.EncerramentoArquivo;
 import br.com.dsc.lcdpr.components.*;
-import br.com.dsc.lcdpr.enumerated.*;
+import br.com.dsc.lcdpr.enumerated.TIPO_CONTRAPARTE;
+import br.com.dsc.lcdpr.enumerated.TIPO_DOCUMENTO;
+import br.com.dsc.lcdpr.enumerated.TIPO_EXPLORACAO;
+import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
 import br.com.dsc.lcdpr.lcdpr.LCDPR;
+import br.com.dsc.lcdpr.util.ExceptionUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
-import java.time.LocalDate;
-import java.util.Arrays;
+import java.math.BigDecimal;
 
 /**
- * @author Tiago
+ * @author Tiago D.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LcdprTest {
@@ -30,187 +30,143 @@ public class LcdprTest {
     @Test
     @Order(1)
     public void aberturaIdentificacaoTest() {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            //0000|LCDPR|0013|11111111191|JOSÉ DA SILVA|0|0||01012019|31122019
-            IdentificacaoPessoaFisica identificacaoPessoaFisica = IdentificacaoPessoaFisica.builder()
-                    .cpf(11111111191L)
-                    .nome("JOSÉ DA SILVA")
-                    .dataInicioPeriodo(Datas.stringToLocalDate("01/01/2019"))
-                    .dataFinalPeriodo(Datas.stringToLocalDate("01/01/2019"))
-                    .build();
-            //0010|1
-            ParametrosTributacao parametrosTributacao = ParametrosTributacao.builder().build();
-            //0030|RUA TESTE|1234|BLOCO Z SALA 301|BAIRRO LCDPR|DF|5300108|71000000|6133333333|testeLCDPR@LCDPR.com.br
-            Contribuinte contribuinte = Contribuinte.builder()
-                    .endereco("RUA TESTE")
-                    .numero("1234")
-                    .complemento("BLOCO Z SALA 301")
-                    .bairro("BAIRRO LCDPR")
-                    .uf("DF")
-                    .codigoMunicipio("5300108")
-                    .cep("71000000")
-                    .numeroTelefone(6133333333L)
-                    .email("testeLCDPR@LCDPR.com.br")
-                    .build();
-            //0040|001|BR|BRL|12345678|12345678901234|12345678901234|Fazenda Tudo Certo|Rodovia BR 999, Km 3000|||Distrito do Meio|DF|5300108|71000000|2|05000
-            ImovelRural imovelRural = ImovelRural.builder()
-                    .codigoImovel("001")
-                    .cadastroImpostoTerritorialRural("12345678")
-                    .cadastroAtividadeEconomicaPessoaFisica("12345678901234")
-                    .inscricaoEstadual("12345678901234")
-                    .nomeImovel("Fazenda Tudo Certo")
-                    .endereco("Rodovia BR 999, Km 3000")
-                    .bairro("Distrito do Meio")
-                    .uf("DF")
-                    .codigoMunicipio("5300108")
-                    .cep("71000000")
-                    .tipoExploracao(TIPO_EXPLORACAO.CONDOMINIO)
-                    .participacao("05000")
-                    .build();
-            //0045|002|3|12345678912|JOÃO DE SOUSA|00520
-            CadastroTerceiro cadastroTerceiros = CadastroTerceiro.builder()
-                    .codigoImovel("002")
-                    .tipoContraparte(TIPO_CONTRAPARTE.PARCEIRO)
-                    .cpfCnpjContraparte("12345678912")
-                    .nomeContraparte("JOÃO DE SOUSA")
-                    .percentualContraparte("00520")
-                    .build();
-            //0050|001|BR|999|Banco LCDPR|1234|0000000123456789
-            ContaBancaria contaBancaria = ContaBancaria.builder()
-                    .codigoConta("001")
-                    .banco("999")
-                    .nomeBanco("Banco LCDPR")
-                    .agencia("1234")
-                    .numeroConta("0000000123456789")
-                    .build();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-            AberturaIdentificacao aberturaIdentificacao = AberturaIdentificacao.builder()
-                    .identificacaoPessoaFisica(identificacaoPessoaFisica)
-                    .parametrosTributacao(parametrosTributacao)
-                    .dadosCadastraisContribuinte(contribuinte)
-                    .build()
-                    .addImovelRural(imovelRural)
-                    .addCadastroTerceiro(cadastroTerceiros)
-                    .addContaBancaria(contaBancaria);
+        LCDPR lcdpr = LCDPR.builder()
+                .bloco0(generateBloco0())
+                .blocoQ(generateBlocoQ())
+                .bloco9(generateBloco9())
+                .build();
 
-            System.out.println(objectMapper.writeValueAsString(aberturaIdentificacao));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        String pipeText = lcdpr.generatedPipeText();
+
+        System.out.println(ExceptionUtil.tryCatch("", f -> objectMapper.writeValueAsString(lcdpr)) + "\n" + pipeText);
+        Assertions.assertNotNull(pipeText);
     }
 
-    @Test
-    public void preenchimentoTest() {
-        LCDPR lcdpr = generatedLCDPR();
-        System.err.println(lcdpr.generatedPipeText());
-    }
-
-    public static LCDPR generatedLCDPR() {
-        LCDPR lcdpr = new LCDPR();
-        lcdpr.setBloco0(generatedBloco0());
-        lcdpr.setBlocoq(generatedBlocoQ());
-        lcdpr.setBloco9(generatedBloco9());
-        return lcdpr;
-    }
-
-    public static AberturaIdentificacao generatedBloco0() {
-        //0000|LCDPR|0001|11111111191|JOSÉ DA SILVA|0|0||01012018|31122018
-        IdentificacaoPessoaFisica Ipf = new IdentificacaoPessoaFisica();
-        Ipf.setCpf(11111111191l);
-        Ipf.setNome("JOSÉ DA SILVA");
-        Ipf.setIndicadorInicioPeriodo(INICIO_PERIODO.REGULAR);
-        Ipf.setSituacaoEspecial(SITUACAO_ESPECIAL.NORMAL);
-        Ipf.setDataInicioPeriodo(LocalDate.of(2018, 1, 1));
-        Ipf.setDataFinalPeriodo(LocalDate.of(2018, 12, 31));
-        //0010|11112222333344445555666677778888999900001|1
-        ParametrosTributacao parametrosTributacao = new ParametrosTributacao();
-        //parametrosTributacao.setHashIrrfAnterior("11112222333344445555666677778888999900001");
-        parametrosTributacao.setFormaApuracao(FORMA_APURACAO.LIVRO_CAIXA);
+    public static AberturaIdentificacao generateBloco0() {
+        //0000|LCDPR|0013|11111111191|JOSÉ DA SILVA|0|0||01012019|31122019
+        IdentificacaoPessoaFisica identificacaoPessoaFisica = IdentificacaoPessoaFisica.builder()
+                .cpf(11111111191L)
+                .nome("JOSÉ DA SILVA")
+                .dataInicioPeriodo(Datas.stringToLocalDate("01/01/2019"))
+                .dataFinalPeriodo(Datas.stringToLocalDate("01/01/2019"))
+                .build();
+        //0010|1
+        ParametrosTributacao parametrosTributacao = ParametrosTributacao.builder().build();
         //0030|RUA TESTE|1234|BLOCO Z SALA 301|BAIRRO LCDPR|DF|5300108|71000000|6133333333|testeLCDPR@LCDPR.com.br
-        Contribuinte contribuinte = new Contribuinte();
-        contribuinte.setEndereco("RUA TESTE");
-        contribuinte.setNumero("1234");
-        contribuinte.setComplemento("BLOCO Z SALA 301");
-        contribuinte.setBairro("BAIRRO LCDPR");
-        contribuinte.setUf("DF");
-        contribuinte.setCodigoMunicipio("5300108");
-        contribuinte.setCep("71000000");
-        contribuinte.setNumeroTelefone(6133333333L);
-        contribuinte.setEmail("testeLCDPR@LCDPR.com.br");
-        //0040|001|BRA|BRL|12345678|123456789012|12345678901234|Fazenda Tudo Certo|Rodovia BR 999, Km 3000|||Distrito do Meio|DF|5300108|71000000|2|0500
-        ImovelRural imovelRural = new ImovelRural();
-        imovelRural.setCodigoImovel("001");
-        imovelRural.setMoeda("BRL");
-        imovelRural.setCadastroImpostoTerritorialRural("12345678");
-        imovelRural.setCadastroAtividadeEconomicaPessoaFisica("123456789012");
-        imovelRural.setInscricaoEstadual("12345678901234");
-        imovelRural.setNomeImovel("Fazenda Tudo Certo");
-        imovelRural.setEndereco("Rodovia BR 999, Km 3000");
-        imovelRural.setBairro("Distrito do Meio");
-        imovelRural.setUf("DF");
-        imovelRural.setCodigoMunicipio("5300108");
-        imovelRural.setCep("71000000");
-        imovelRural.setTipoExploracao(TIPO_EXPLORACAO.CONDOMINIO);
-        imovelRural.setParticipacao("0500");
-        //0045|002|3|12345678912|JOÃO DE SOUSA|052
-        CadastroTerceiro exploracao = new CadastroTerceiro();
-        exploracao.setCodigoImovel("002");
-        exploracao.setTipoContraparte(TIPO_CONTRAPARTE.PARCEIRO);
-        exploracao.setCpfCnpjContraparte("12345678912");
-        exploracao.setNomeContraparte("JOÃO DE SOUSA");
-        exploracao.setPercentualContraparte("052");
-        //0050|001|BRA|999|Banco LCDPR|1234|0000000123456789
-        ContaBancaria contaBancaria = new ContaBancaria();
-        contaBancaria.setCodigoConta("001");
-        contaBancaria.setPaisConta("BRA");
-        contaBancaria.setBanco("999");
-        contaBancaria.setNomeBanco("Banco LCDPR");
-        contaBancaria.setAgencia("1234");
-        contaBancaria.setNumeroConta("0000000123456789");
+        Contribuinte contribuinte = Contribuinte.builder()
+                .endereco("RUA TESTE")
+                .numero("1234")
+                .complemento("BLOCO Z SALA 301")
+                .bairro("BAIRRO LCDPR")
+                .uf("DF")
+                .codigoMunicipio("5300108")
+                .cep("71000000")
+                .numeroTelefone(6133333333L)
+                .email("testeLCDPR@LCDPR.com.br")
+                .build();
+        //0040|001|BR|BRL|12345678|12345678901234|12345678901234|Fazenda Tudo Certo|Rodovia BR 999, Km 3000|||Distrito do Meio|DF|5300108|71000000|2|05000
+        ImovelRural imovelRural = ImovelRural.builder()
+                .codigoImovel("001")
+                .cadastroImpostoTerritorialRural("12345678")
+                .cadastroAtividadeEconomicaPessoaFisica("12345678901234")
+                .inscricaoEstadual("12345678901234")
+                .nomeImovel("Fazenda Tudo Certo")
+                .endereco("Rodovia BR 999, Km 3000")
+                .bairro("Distrito do Meio")
+                .uf("DF")
+                .codigoMunicipio("5300108")
+                .cep("71000000")
+                .tipoExploracao(TIPO_EXPLORACAO.CONDOMINIO)
+                .participacao("05000")
+                .build();
+        //0045|002|3|12345678912|JOÃO DE SOUSA|00520
+        CadastroTerceiro cadastroTerceiros = CadastroTerceiro.builder()
+                .codigoImovel("002")
+                .tipoContraparte(TIPO_CONTRAPARTE.PARCEIRO)
+                .cpfCnpjContraparte("12345678912")
+                .nomeContraparte("JOÃO DE SOUSA")
+                .percentualContraparte("00520")
+                .build();
+        //0050|001|BR|999|Banco LCDPR|1234|0000000123456789
+        ContaBancaria contaBancaria = ContaBancaria.builder()
+                .codigoConta("001")
+                .banco("999")
+                .nomeBanco("Banco LCDPR")
+                .agencia("1234")
+                .numeroConta("0000000123456789")
+                .build();
 
-        AberturaIdentificacao abertura = new AberturaIdentificacao();
-        abertura.setIdentificacaoPessoaFisica(Ipf);
-        abertura.setParametrosTributacao(parametrosTributacao);
-        abertura.setDadosCadastraisContribuinte(contribuinte);
-        abertura.setImoveisRurais(Arrays.asList(imovelRural));
-        abertura.setCadastroTerceiros(Arrays.asList(exploracao));
-        abertura.setContasBancarias(Arrays.asList(contaBancaria));
-        return abertura;
+        return AberturaIdentificacao.builder()
+                .identificacaoPessoaFisica(identificacaoPessoaFisica)
+                .parametrosTributacao(parametrosTributacao)
+                .dadosCadastraisContribuinte(contribuinte)
+                .build()
+                .addImovelRural(imovelRural)
+                .addCadastroTerceiro(cadastroTerceiros)
+                .addContaBancaria(contaBancaria);
     }
 
-    public static DemonstrativoLivroCaixa generatedBlocoQ() {
-        //Q100|02012018|001|001|321|1|Venda de 100 sacas de milho|12345678000112|1|1000000|000|1100000|P
-        DemoLivroCaixa livroCaixa = new DemoLivroCaixa();
-        livroCaixa.setData(LocalDate.of(2018, 1, 2));
-        livroCaixa.setCod_imovel("001");
-        livroCaixa.setCod_conta("001");
-        livroCaixa.setNumero_documento("321");
-        livroCaixa.setTipo_documento(TIPO_DOCUMENTO.NOTA_FISCAL);
-        livroCaixa.setHistorico("Venda de 100 sacas de milho");
-        livroCaixa.setId_participante("12345678000112");
-        livroCaixa.setTipo_lancamento(TIPO_LANCAMENTO.RECEITA_ATV_RURAL);
-        livroCaixa.setValor_entrada("1000000");
-        livroCaixa.setValor_saida("000");
-        livroCaixa.setSaldo_final("1100000");
-        //Q200|BRA|012018||10000000| 8500000| 1500000|P
-        ResumoDemoLivroCaixa resumo = new ResumoDemoLivroCaixa();
-        resumo.setPais("BRA");
-        resumo.setMes("012018");
-        resumo.setValor_entrada("10000000");
-        resumo.setValor_saida("8500000");
-        resumo.setSaldo_final("1500000");
+    public static DemonstrativoLivroCaixa generateBlocoQ() {
+        //Q100|02012019|001|001|2|3|Venda de 100 sacas de milho|12345678912|1|1000000|0|1100000|P
+        DemoLivroCaixa livroCaixa = DemoLivroCaixa.builder()
+                .data(Datas.stringToLocalDate("02/01/2019"))
+                .codigoImovel("001")
+                .codigoConta("001")
+                .numeroDocumento("2")
+                .tipoDocumento(TIPO_DOCUMENTO.FATURA)
+                .historico("Venda de 100 sacas de milho")
+                .cpfCnpjParticipante("12345678912")
+                .tipoLancamento(TIPO_LANCAMENTO.RECEITA_PRODUTOS_ENTREGUES)
+                .valorEntrada(new BigDecimal(10000.00))
+                .saldoFinal(new BigDecimal(11000.00))
+                .build();
+        //Q100|02012019|001|001|3|1|Pagamento de sementes e outros insumos|12345678000121|2|0|500000|600000|P
+        DemoLivroCaixa livroCaixa2 = DemoLivroCaixa.builder()
+                .data(Datas.stringToLocalDate("02/01/2019"))
+                .codigoImovel("001")
+                .codigoConta("001")
+                .numeroDocumento("3")
+                .tipoDocumento(TIPO_DOCUMENTO.NOTA_FISCAL)
+                .historico("Pagamento de sementes e outros insumos")
+                .cpfCnpjParticipante("12345678000121")
+                .tipoLancamento(TIPO_LANCAMENTO.DESPESAS_CUSTEIO_INVESTIMENTOS)
+                .valorSaida(new BigDecimal(5000.00))
+                .saldoFinal(new BigDecimal(6000.00))
+                .build();
 
-        DemonstrativoLivroCaixa demonstrativo = new DemonstrativoLivroCaixa();
-        demonstrativo.setDemonstrativo_livro_caixa(Arrays.asList(livroCaixa));
-        demonstrativo.setResumo_demonstrativo_livro_caixa(Arrays.asList(resumo));
-        return demonstrativo;
+        //Q200|012019|10000000| 8500000| 1500000|P
+        ResumoDemoLivroCaixa resumo = ResumoDemoLivroCaixa.builder()
+                .mes("012019")
+                .valorEntrada(new BigDecimal(100000.00))
+                .valorSaida(new BigDecimal(85000.00))
+                .saldoFinal(new BigDecimal(15000.00))
+                .build();
+        //Q200|022019|7000000| 6000000| 2500000|P
+        ResumoDemoLivroCaixa resumo2 = ResumoDemoLivroCaixa.builder()
+                .mes("022019")
+                .valorEntrada(new BigDecimal(70000.00))
+                .valorSaida(new BigDecimal(60000.00))
+                .saldoFinal(new BigDecimal(25000.00))
+                .build();
+
+        return DemonstrativoLivroCaixa.builder().build()
+                .addDemoLivroCaixa(livroCaixa)
+                .addDemoLivroCaixa(livroCaixa2)
+                .addResumoDemonstrativoLivroCaixa(resumo)
+                .addResumoDemonstrativoLivroCaixa(resumo2);
     }
 
-    public static EncerramentoArquivo generatedBloco9() {
-        //9999|8007
-        EncerramentoArquivo encerramento = new EncerramentoArquivo();
-        encerramento.setQuantidade_linhas(8007);
-        return encerramento;
+    public static EncerramentoArquivo generateBloco9() {
+        //9999|JOSE DE SOUZA|12345678912|AL123456O| testeLCDPR@LCDPR.com.br|6133333333|8007
+        return EncerramentoArquivo.builder()
+                .nomeContador("JOSE DE SOUZA")
+                .cpfCnpjContador(12345678912L)
+                .numeroConselhoRegionalContabilidade("AL123456O")
+                .emailContador("testeLCDPR@LCDPR.com.br")
+                .telefoneContador(6133333333L)
+                .quantidadeRegistrosArquivo(8007)
+                .build();
     }
 }
