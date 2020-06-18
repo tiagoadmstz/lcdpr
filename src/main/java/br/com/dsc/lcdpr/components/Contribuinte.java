@@ -6,6 +6,7 @@
 package br.com.dsc.lcdpr.components;
 
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "registro", "endereco", "numero", "complemento", "bairro",
         "uf", "codigoMunicipio", "cep", "numeroTelefone", "email"
@@ -38,8 +40,9 @@ public class Contribuinte implements Serializable, LcdprHandler {
     private String endereco; //t = 150, o = sim
     @JsonProperty("num")
     private String numero; //t = 6, o = sim
+    @Builder.Default
     @JsonProperty("compl")
-    private String complemento; //t = 50, o = não
+    private String complemento = ""; //t = 50, o = não
     private String bairro; //t = 50, o = sim
     private String uf; //t = 2, o = sim  (http://sped.rfb.gov.br/pasta/show/1932)
     @JsonProperty("cod_mun")
