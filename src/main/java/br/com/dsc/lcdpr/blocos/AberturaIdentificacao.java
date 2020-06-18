@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "identificacaoPessoaFisica", "parametrosTributacao", "dadosCadastraisContribuinte",
-        "imoveisRurais", "exploracaoImoveisRurais", "contasBancarias"
+        "imoveisRurais", "cadastroTerceiros", "contasBancarias"
 })
 public class AberturaIdentificacao implements Serializable, LcdprHandler {
 
@@ -42,11 +43,29 @@ public class AberturaIdentificacao implements Serializable, LcdprHandler {
     private ParametrosTributacao parametrosTributacao; //H = 2, 0010, 1:1, o
     @JsonProperty("dados_cadastrais_contribuinte")
     private Contribuinte dadosCadastraisContribuinte; //H = 2, 0030, 1:1, o
+    @Builder.Default
     @JsonProperty("imoveis_rurais")
-    private List<ImovelRural> imoveisRurais; //H = 2, 0040, 1:N, o
+    private List<ImovelRural> imoveisRurais = new ArrayList(); //H = 2, 0040, 1:N, o
+    @Builder.Default
     @JsonProperty("exploracao_imoveis_rurais")
-    private List<ExploracaoMedianteContrato> exploracaoImoveisRurais; //H = 3, 0045, 1:N, f != o = Se 0040.PARTICIPACAO for menor que 100% ou 0040.TIPO_EXPLORACAO diferente de "1"
+    private List<CadastroTerceiro> cadastroTerceiros = new ArrayList(); //H = 3, 0045, 1:N, f != o = Se 0040.PARTICIPACAO for menor que 100% ou 0040.TIPO_EXPLORACAO diferente de "1"
+    @Builder.Default
     @JsonProperty("contas_bancarias")
-    private List<ContaBancaria> contasBancarias; //H = 2, 0050, 1:N, o
+    private List<ContaBancaria> contasBancarias = new ArrayList(); //H = 2, 0050, 1:N, o
+
+    public AberturaIdentificacao addImovelRural(ImovelRural imovelRural) {
+        this.imoveisRurais.add(imovelRural);
+        return this;
+    }
+
+    public AberturaIdentificacao addCadastroTerceiro(CadastroTerceiro cadastroTerceiro) {
+        this.cadastroTerceiros.add(cadastroTerceiro);
+        return this;
+    }
+
+    public AberturaIdentificacao addContaBancaria(ContaBancaria contaBancaria) {
+        this.contasBancarias.add(contaBancaria);
+        return this;
+    }
 
 }
