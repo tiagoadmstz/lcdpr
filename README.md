@@ -36,6 +36,123 @@ Q200|022019|7000000|6000000|2500000|P
 ```
 Saída no formato json 
 ````json
-{"bloco_0":{"identificacao_pessoa_fisica":{"reg":"0000","nome_esc":"LCDPR","cod_ver":"0013","cpf":11111111191,"nome":"JOSÉ DA SILVA","ind_sit_ini_per":0,"sit_especial":"0","dt_ini":"01012019","dt_fin":"01012019"},"parametros_tributacao":{"reg":"0010","forma_apur":1},"dados_cadastrais_contribuinte":{"reg":"0030","endereco":"RUA TESTE","num":"1234","compl":"BLOCO Z SALA 301","bairro":"BAIRRO LCDPR","uf":"DF","cod_mun":"5300108","cep":"71000000","num_tel":6133333333,"email":"testeLCDPR@LCDPR.com.br"},"imoveis_rurais":[{"reg":"0040","cod_imovel":"001","pais":"BR","moeda":"BRL","cad_ITR":"12345678","CAEPF":"12345678901234","inscr_estadual":"12345678901234","nome_imovel":"Fazenda Tudo Certo","endereco":"Rodovia BR 999, Km 3000","num":"","compl":"","bairro":"Distrito do Meio","uf":"DF","cod_mun":"5300108","cep":"71000000","tipo_exploracao":2,"participacao":"05000"}],"exploracao_imoveis_rurais":[{"reg":"0045","cod_imovel":"002","tipo_contraparte":"3","id_contraparte":"12345678912","nome_contraparte":"JOÃO DE SOUSA","perc_contraparte":"00520"}],"contas_bancarias":[{"reg":"0050","cod_conta":"001","pais_cta":"BR","banco":"999","nome_banco":"Banco LCDPR","agencia":"1234","num_conta":"0000000123456789"}]},"bloco_Q":{"demonstrativo_livro_caixa":[{"reg":"Q100","data":{"year":2019,"month":"JANUARY","chronology":{"id":"ISO","calendarType":"iso8601"},"dayOfMonth":2,"monthValue":1,"dayOfWeek":"WEDNESDAY","era":"CE","dayOfYear":2,"leapYear":false},"cod_imovel":"001","cod_conta":"001","num_doc":"2","tipo_doc":2,"hist":"Venda de 100 sacas de milho","id_partic":"12345678912","tipo_lanc":3,"vl_entrada":"1000000","vl_saida":"000","sld_fin":"1100000","nat_sld_fin":"P"},{"reg":"Q100","data":{"year":2019,"month":"JANUARY","chronology":{"id":"ISO","calendarType":"iso8601"},"dayOfMonth":2,"monthValue":1,"dayOfWeek":"WEDNESDAY","era":"CE","dayOfYear":2,"leapYear":false},"cod_imovel":"001","cod_conta":"001","num_doc":"3","tipo_doc":1,"hist":"Pagamento de sementes e outros insumos","id_partic":"12345678000121","tipo_lanc":2,"vl_entrada":"000","vl_saida":"500000","sld_fin":"600000","nat_sld_fin":"P"}],"resumo_demonstrativo_livro_caixa":[{"reg":"Q200","mes":"012019","vl_entrada":"10000000","vl_saida":"8500000","sld_fin":"1500000","nat_sld_fin":"P"},{"reg":"Q200","mes":"022019","vl_entrada":"7000000","vl_saida":"6000000","sld_fin":"2500000","nat_sld_fin":"P"}]},"bloco_9":{"reg":"9999","ident_nom":"JOSE DE SOUZA","ident_cpf_cnpj":12345678912,"ind_crc":"AL123456O","email":"testeLCDPR@LCDPR.com.br","fone":6133333333,"qtd_lin":8007}}
+{
+  "bloco_0":{
+    "identificacao_pessoa_fisica":{
+      "reg":"0000",
+      "nome_esc":"LCDPR",
+      "cod_ver":"0013",
+      "cpf":11111111191,
+      "nome":"JOSÉ DA SILVA",
+      "ind_sit_ini_per":0,
+      "sit_especial":"0",
+      "dt_ini":"01012019",
+      "dt_fin":"01012019"
+    },
+    "parametros_tributacao":{
+      "reg":"0010",
+      "forma_apur":1
+    },
+    "dados_cadastrais_contribuinte":{
+      "reg":"0030",
+      "endereco":"RUA TESTE",
+      "num":"1234",
+      "compl":"BLOCO Z SALA 301",
+      "bairro":"BAIRRO LCDPR",
+      "uf":"DF",
+      "cod_mun":"5300108",
+      "cep":"71000000",
+      "num_tel":6133333333,
+      "email":"testeLCDPR@LCDPR.com.br"
+    },
+    "imoveis_rurais":[{ 
+      "reg":"0040",
+      "cod_imovel":"001",
+      "pais":"BR",
+      "moeda":"BRL",
+      "cad_ITR":"12345678",
+      "CAEPF":"12345678901234",
+      "inscr_estadual":"12345678901234",
+      "nome_imovel":"Fazenda Tudo Certo",
+      "endereco":"Rodovia BR 999, Km 3000",
+      "num":"",
+      "compl":"", 
+      "bairro":"Distrito do Meio",
+      "uf":"DF","cod_mun":"5300108",
+      "cep":"71000000",
+      "tipo_exploracao":2,
+      "participacao":"05000"
+    }],
+    "exploracao_imoveis_rurais":[{
+      "reg":"0045",
+      "cod_imovel":"002",
+      "tipo_contraparte":"3",
+      "id_contraparte":"12345678912",
+      "nome_contraparte":"JOÃO DE SOUSA",
+      "perc_contraparte":"00520"
+    }],
+    "contas_bancarias":[{
+      "reg":"0050",
+      "cod_conta":"001",
+      "pais_cta":"BR",
+      "banco":"999",
+      "nome_banco":"Banco LCDPR",
+      "agencia":"1234","num_conta":"0000000123456789"
+    }]},
+  "bloco_Q":{
+    "demonstrativo_livro_caixa":[{
+      "reg":"Q100",
+      "data": "02012019",
+      "cod_imovel":"001",
+      "cod_conta":"001",
+      "num_doc":"2",
+      "tipo_doc":2,
+      "hist":"Venda de 100 sacas de milho",
+      "id_partic":"12345678912",
+      "tipo_lanc":3,
+      "vl_entrada":"1000000",
+      "vl_saida":"000",
+      "sld_fin":"1100000",
+      "nat_sld_fin":"P"
+    },{
+      "reg":"Q100",
+      "data":"02012019",
+      "cod_imovel":"001",
+      "cod_conta":"001",
+      "num_doc":"3",
+      "tipo_doc":1,
+      "hist":"Pagamento de sementes e outros insumos",
+      "id_partic":"12345678000121",
+      "tipo_lanc":2,
+      "vl_entrada":"000",
+      "vl_saida":"500000",
+      "sld_fin":"600000",
+      "nat_sld_fin":"P"
+    }],
+    "resumo_demonstrativo_livro_caixa":[{
+      "reg":"Q200",
+      "mes":"012019",
+      "vl_entrada":"10000000",
+      "vl_saida":"8500000",
+      "sld_fin":"1500000",
+      "nat_sld_fin":"P"
+    },{
+      "reg":"Q200",
+      "mes":"022019",
+      "vl_entrada":"7000000",
+      "vl_saida":"6000000",
+      "sld_fin":"2500000",
+      "nat_sld_fin":"P"
+    }]},
+  "bloco_9":{
+    "reg":"9999",
+    "ident_nom":"JOSE DE SOUZA",
+    "ident_cpf_cnpj":12345678912,
+    "ind_crc":"AL123456O",
+    "email":"testeLCDPR@LCDPR.com.br",
+    "fone":6133333333,
+    "qtd_lin":8007
+  }
+}
 ````
 
