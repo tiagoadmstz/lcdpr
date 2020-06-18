@@ -10,6 +10,7 @@ import br.com.dsc.lcdpr.enumerated.TIPO_DOCUMENTO;
 import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import br.com.dsc.lcdpr.serializers.BigDecimalSerializer;
+import br.com.dsc.lcdpr.serializers.LocalDateSerializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -48,6 +49,7 @@ public class DemoLivroCaixa implements Serializable, LcdprHandler {
     @JsonProperty("reg")
     private String registro = "Q100"; //t = 4, o = sim, p = Q100
     @Builder.Default
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate data = LocalDate.now(); //t = 8, o = sim
     @JsonProperty("cod_imovel")
     private String codigoImovel; //t = 3, o = sim
