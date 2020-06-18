@@ -8,9 +8,13 @@ package br.com.dsc.lcdpr.blocos;
 import br.com.dsc.lcdpr.components.DemoLivroCaixa;
 import br.com.dsc.lcdpr.components.ResumoDemoLivroCaixa;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,10 +28,28 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+        "demonstrativoLivroCaixa", "resumoDemonstrativoLivroCaixa"
+})
 public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
 
     private static final long serialVersionUID = 6287575698325024956L;
-    private List<DemoLivroCaixa> demonstrativo_livro_caixa; //H = 2, Q100, 1:N, o
-    private List<ResumoDemoLivroCaixa> resumo_demonstrativo_livro_caixa; //H = 2, Q200, 1:N, o
+    @Builder.Default
+    @JsonProperty("demonstrativo_livro_caixa")
+    private List<DemoLivroCaixa> demonstrativoLivroCaixa = new ArrayList(); //H = 2, Q100, 1:N, o
+    @Builder.Default
+    @JsonProperty("resumo_demonstrativo_livro_caixa")
+    private List<ResumoDemoLivroCaixa> resumoDemonstrativoLivroCaixa = new ArrayList(); //H = 2, Q200, 1:N, o
+
+    public DemonstrativoLivroCaixa addDemoLivroCaixa(DemoLivroCaixa demoLivroCaixa) {
+        demonstrativoLivroCaixa.add(demoLivroCaixa);
+        return this;
+    }
+
+    public DemonstrativoLivroCaixa addResumoDemonstrativoLivroCaixa(ResumoDemoLivroCaixa resumoDemoLivroCaixa) {
+        resumoDemonstrativoLivroCaixa.add(resumoDemoLivroCaixa);
+        return this;
+    }
 
 }
