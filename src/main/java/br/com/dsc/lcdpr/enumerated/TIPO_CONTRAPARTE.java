@@ -18,21 +18,37 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum TIPO_CONTRAPARTE {
 
-    CONDOMINO("1"),
-    ARRENDADOR("2"),
-    PARCEIRO("3"),
-    COMODANTE("4"),
-    OUTRO("5");
+    CONDOMINO(1),
+    ARRENDADOR(2),
+    PARCEIRO(3),
+    COMODANTE(4),
+    OUTRO(5);
 
-    private final String valor;
+    private final int valor;
 
-    TIPO_CONTRAPARTE(String valor) {
+    TIPO_CONTRAPARTE(int valor) {
         this.valor = valor;
     }
 
     @JsonValue
-    public String getValor() {
+    public int getValor() {
         return valor;
+    }
+
+    public static TIPO_CONTRAPARTE getEnum(int valor) {
+        switch (valor) {
+            case 1:
+            default:
+                return CONDOMINO;
+            case 2:
+                return ARRENDADOR;
+            case 3:
+                return PARCEIRO;
+            case 4:
+                return COMODANTE;
+            case 5:
+                return OUTRO;
+        }
     }
 
 }

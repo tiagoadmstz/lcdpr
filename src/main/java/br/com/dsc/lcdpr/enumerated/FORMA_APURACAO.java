@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * 1) Livro Caixa: Apurou o resultado da atividade rural com base nos lançamentos registrados no Livro Caixa do Produtor Rural.
  * 2) Apurou o resultado da atividade rural com base na faculdade disposta no art. 5º da Lei nº 8.023, de 1990 (20% da Receita Bruta)
  *
- * @author Tiago
+ * @author Tiago D.
  */
 public enum FORMA_APURACAO {
 
@@ -30,6 +30,10 @@ public enum FORMA_APURACAO {
     @JsonValue
     public int getValor() {
         return valor;
+    }
+
+    public static FORMA_APURACAO getEnum(int valor) {
+        return valor == 1 ? LIVRO_CAIXA : APURACAO_LUCRO_8023;
     }
 
 }

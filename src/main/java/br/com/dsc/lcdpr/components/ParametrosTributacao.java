@@ -39,4 +39,16 @@ public class ParametrosTributacao implements Serializable, LcdprHandler {
     @JsonProperty("forma_apur")
     private FORMA_APURACAO formaApuracao = FORMA_APURACAO.LIVRO_CAIXA; //t = 1, o = sim
 
+    /**
+     * String[] values = {"0010","1"}
+     *
+     * @param values String[] with values in same order of the document
+     * @return ParametrosTributacao
+     */
+    public static ParametrosTributacao buildFromArray(String[] values) {
+        return ParametrosTributacao.builder()
+                .formaApuracao(FORMA_APURACAO.getEnum(Integer.valueOf(values[1])))
+                .build();
+    }
+
 }

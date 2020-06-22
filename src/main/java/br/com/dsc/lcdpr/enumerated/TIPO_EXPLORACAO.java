@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * 3 - Imóvel arrendado
  * 4 - Parceria
  * 5 - Comodato
+ * 6 - Outro
  *
  * @author Tiago
  */
@@ -35,6 +36,24 @@ public enum TIPO_EXPLORACAO {
     @JsonValue
     public int getValor() {
         return valor;
+    }
+
+    public static TIPO_EXPLORACAO getEnum(int valor) {
+        switch (valor) {
+            case 1:
+            default:
+                return IMOVEL_PROPRIO;
+            case 2:
+                return CONDOMINIO;
+            case 3:
+                return IMOVEL_ARRENDADO;
+            case 4:
+                return PARCERIA;
+            case 5:
+                return COMODATO;
+            case 6:
+                return OUTROS;
+        }
     }
 
 }

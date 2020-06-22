@@ -68,4 +68,26 @@ public class AberturaIdentificacao implements Serializable, LcdprHandler {
         return this;
     }
 
+    public AberturaIdentificacao buildFromLinesList(List<String> lines) {
+        for (int l = 0; l < lines.size(); l++) {
+            String[] values = lines.get(l).split("\\|");
+            if (l == 0) {
+                identificacaoPessoaFisica = IdentificacaoPessoaFisica.buildFromArrayValues(values);
+            } else if (l == 1) {
+                parametrosTributacao = ParametrosTributacao.buildFromArray(values);
+            } else if (l == 2) {
+                dadosCadastraisContribuinte = Contribuinte.buildFromArray(values);
+            } else if (l == 3) {
+                addImovelRural(ImovelRural.buildFromArray(values));
+            } else if (l == 4) {
+                addCadastroTerceiro(CadastroTerceiro.buildFromArray(values));
+            } else if (l == 5) {
+                addContaBancaria(ContaBancaria.buildFromArray(values));
+            } else {
+                break;
+            }
+        }
+        return this;
+    }
+
 }
