@@ -33,7 +33,13 @@ public enum FORMA_APURACAO {
     }
 
     public static FORMA_APURACAO getEnum(int valor) {
-        return valor == 1 ? LIVRO_CAIXA : APURACAO_LUCRO_8023;
+        switch (valor) {
+            default:
+            case 1:
+                return LIVRO_CAIXA;
+            case 2:
+                return APURACAO_LUCRO_8023;
+        }
     }
 
 }

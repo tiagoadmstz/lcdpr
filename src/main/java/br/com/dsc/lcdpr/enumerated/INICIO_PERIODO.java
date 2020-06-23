@@ -31,4 +31,23 @@ public enum INICIO_PERIODO {
         return valor;
     }
 
+    public static INICIO_PERIODO getEnum(int valor) {
+        switch (valor) {
+            default:
+            case 0:
+                return REGULAR;
+            case 1:
+                return ABERTURA;
+            case 2:
+                return OBRIGATORIO_ESCRITURACAO;
+        }
+    }
+
+    public static INICIO_PERIODO getEnum(String valor) {
+        if (valor != null) {
+            return getEnum(Integer.parseInt(valor));
+        }
+        return REGULAR;
+    }
+
 }

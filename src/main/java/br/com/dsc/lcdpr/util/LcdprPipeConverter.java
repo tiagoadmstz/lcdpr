@@ -12,10 +12,18 @@ import java.time.format.DateTimeFormatter;
 import static br.com.dsc.lcdpr.util.ExceptionUtil.tryCatch;
 
 /**
+ * This class have methods to convert Java classes to String values separated by pipe
+ *
  * @author Tiago D.
  */
 public abstract class LcdprPipeConverter {
 
+    /**
+     * Cast an object to String separated by pipe
+     *
+     * @param object value to convert
+     * @return String with converted value
+     */
     public static String convertToLcdprPattern(Object object) {
         if (object == null) return "|";
         if (object.getClass() == LocalDate.class) {

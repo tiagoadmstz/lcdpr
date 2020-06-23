@@ -58,7 +58,8 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
     @JsonProperty("sit_especial")
     private SITUACAO_ESPECIAL situacaoEspecial = SITUACAO_ESPECIAL.NORMAL; //t = 1, o = sim
     @JsonProperty("dt_sit_esp")
-    private Integer dataSituacaoEspecial = null; //t = 8, o = não
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate dataSituacaoEspecial; //t = 8, o = não
     @JsonProperty("dt_ini")
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate dataInicioPeriodo; //t = 8, o = sim
@@ -79,6 +80,9 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
                 .codigoVersao(values[2])
                 .cpf(Long.parseLong(values[3]))
                 .nome(values[4])
+                .indicadorInicioPeriodo(INICIO_PERIODO.getEnum(values[5]))
+                .situacaoEspecial(SITUACAO_ESPECIAL.getEnum(values[6]))
+                .dataSituacaoEspecial(values[7] != null ? LocalDate.parse(values[7], formatter) : null)
                 .dataInicioPeriodo(LocalDate.parse(values[8], formatter))
                 .dataFinalPeriodo(LocalDate.parse(values[9], formatter))
                 .build();

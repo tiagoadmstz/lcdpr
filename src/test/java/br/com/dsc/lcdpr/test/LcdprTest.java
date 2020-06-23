@@ -14,7 +14,7 @@ import br.com.dsc.lcdpr.enumerated.TIPO_CONTRAPARTE;
 import br.com.dsc.lcdpr.enumerated.TIPO_DOCUMENTO;
 import br.com.dsc.lcdpr.enumerated.TIPO_EXPLORACAO;
 import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
-import br.com.dsc.lcdpr.lcdpr.LCDPR;
+import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 import br.com.dsc.lcdpr.util.ExceptionUtil;
 import br.com.dsc.lcdpr.util.LcdprUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,8 +35,8 @@ public class LcdprTest {
     public void aberturaIdentificacaoTest() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        LCDPR lcdpr = generateLcdpr();
-        String pipeText = lcdpr.generatedPipeText();
+        Lcdpr lcdpr = generateLcdpr();
+        String pipeText = lcdpr.generatePipeText();
 
         System.out.println(ExceptionUtil.tryCatch("", f -> objectMapper.writeValueAsString(lcdpr)) + "\n" + pipeText);
         Assertions.assertNotNull(pipeText);
@@ -45,7 +45,7 @@ public class LcdprTest {
     @Test
     @Order(2)
     public void exportLcdprTest() {
-        LCDPR lcdpr = generateLcdpr();
+        Lcdpr lcdpr = generateLcdpr();
         LcdprUtil.exportLcdprFile(lcdpr, LocalDate.now());
     }
 
@@ -53,12 +53,12 @@ public class LcdprTest {
     @Order(3)
     public void importLcdprTest() {
         File file = new File("LCDPR.txt");
-        LCDPR lcdpr = LcdprUtil.importLcdprFromTxtFile(file);
-        System.out.println(lcdpr.generatedPipeText());
+        Lcdpr lcdpr = LcdprUtil.importLcdprFromTxtFile(file);
+        System.out.println(lcdpr.generatePipeText());
     }
 
-    public static LCDPR generateLcdpr() {
-        return LCDPR.builder()
+    public static Lcdpr generateLcdpr() {
+        return Lcdpr.builder()
                 .bloco0(generateBloco0())
                 .blocoQ(generateBlocoQ())
                 .bloco9(generateBloco9())
