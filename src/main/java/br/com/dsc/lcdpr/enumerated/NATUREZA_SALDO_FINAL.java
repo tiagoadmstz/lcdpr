@@ -23,4 +23,14 @@ public enum NATUREZA_SALDO_FINAL {
         return valor;
     }
 
+    public static NATUREZA_SALDO_FINAL getEnum(String valor) {
+        switch (valor) {
+            case "N":
+                return NEGATIVO;
+            default:
+            case "P":
+                return POSITIVO;
+        }
+    }
+
 }

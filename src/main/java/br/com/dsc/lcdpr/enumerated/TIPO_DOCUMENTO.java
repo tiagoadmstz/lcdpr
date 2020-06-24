@@ -38,4 +38,29 @@ public enum TIPO_DOCUMENTO {
         return valor;
     }
 
+    public static TIPO_DOCUMENTO getEnum(int valor) {
+        switch (valor) {
+            default:
+            case 1:
+                return NOTA_FISCAL;
+            case 2:
+                return FATURA;
+            case 3:
+                return RECIBO;
+            case 4:
+                return CONTRATO;
+            case 5:
+                return FOLHA_PAGAMENTO;
+            case 6:
+                return OUTROS;
+        }
+    }
+
+    public static TIPO_DOCUMENTO getEnum(String valor) {
+        if (valor != null) {
+            return getEnum(Integer.parseInt(valor));
+        }
+        return NOTA_FISCAL;
+    }
+
 }

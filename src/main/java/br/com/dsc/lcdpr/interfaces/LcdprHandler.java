@@ -15,10 +15,17 @@ import java.util.List;
 import static br.com.dsc.lcdpr.util.ExceptionUtil.tryCatch;
 
 /**
+ * Handler for LCDPR classes
+ *
  * @author Tiago D.
  */
 public interface LcdprHandler {
 
+    /**
+     * Generates piped text from the root class recursively
+     *
+     * @return String with converted values
+     */
     default String generatePipeText() {
         String result = "";
         try {
@@ -27,23 +34,20 @@ public interface LcdprHandler {
                     .filter(f -> !"serialversionuid".equalsIgnoreCase(f.getName()))
                     .map(f -> {
                         f.setAccessible(true);
-                        String rst = "";
                         Object ob = tryCatch(null, fct -> f.get(this));
-                        if (ob != null) {
-                            try {
-                                if (ob.getClass().getSuperclass() == AbstractList.class) {
-                                    for (Object item : ((List) ob)) {
-                                        rst += String.valueOf(item.getClass().getMethod("generatePipeText").invoke(item));
-                                    }
-                                } else {
-                                    rst = String.valueOf(ob.getClass().getMethod("generatePipeText").invoke(ob));
+                        try {
+                            String rst = "";
+                            if (ob.getClass().getSuperclass() == AbstractList.class) {
+                                for (Object item : ((List) ob)) {
+                                    rst += String.valueOf(item.getClass().getMethod("generatePipeText").invoke(item));
                                 }
-                                return rst;
-                            } catch (Exception ex) {
+                            } else {
+                                rst = String.valueOf(ob.getClass().getMethod("generatePipeText").invoke(ob));
                             }
-                            return LcdprPipeConverter.convertToLcdprPattern(ob);
+                            return rst;
+                        } catch (Exception ex) {
                         }
-                        return rst;
+                        return LcdprPipeConverter.convertToLcdprPattern(ob);
                     })
                     .reduce("", (str1, str2) -> str1.concat(str2));
         } catch (Exception ex) {

@@ -32,4 +32,23 @@ public enum TIPO_LANCAMENTO {
         return valor;
     }
 
+    public static TIPO_LANCAMENTO getEnum(int valor) {
+        switch (valor) {
+            default:
+            case 1:
+                return RECEITA_ATIVIDADE_RURAL;
+            case 2:
+                return DESPESAS_CUSTEIO_INVESTIMENTOS;
+            case 3:
+                return RECEITA_PRODUTOS_ENTREGUES;
+        }
+    }
+
+    public static TIPO_LANCAMENTO getEnum(String valor) {
+        if (valor != null) {
+            return getEnum(Integer.parseInt(valor));
+        }
+        return RECEITA_ATIVIDADE_RURAL;
+    }
+
 }

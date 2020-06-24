@@ -73,7 +73,7 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
      * @param values String[] with values in same order of the document
      * @return IdentificacaoPessoaFisica
      */
-    public static IdentificacaoPessoaFisica buildFromArrayValues(String[] values) {
+    public static IdentificacaoPessoaFisica buildFromArray(String[] values) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
         return IdentificacaoPessoaFisica.builder()
                 .nomeEsc(values[1])
@@ -82,7 +82,7 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
                 .nome(values[4])
                 .indicadorInicioPeriodo(INICIO_PERIODO.getEnum(values[5]))
                 .situacaoEspecial(SITUACAO_ESPECIAL.getEnum(values[6]))
-                .dataSituacaoEspecial(values[7] != null ? LocalDate.parse(values[7], formatter) : null)
+                .dataSituacaoEspecial(!"".equals(values[7]) ? LocalDate.parse(values[7], formatter) : null)
                 .dataInicioPeriodo(LocalDate.parse(values[8], formatter))
                 .dataFinalPeriodo(LocalDate.parse(values[9], formatter))
                 .build();

@@ -72,7 +72,7 @@ public class AberturaIdentificacao implements Serializable, LcdprHandler {
         for (int l = 0; l < lines.size(); l++) {
             String[] values = lines.get(l).split("\\|");
             if (l == 0) {
-                identificacaoPessoaFisica = IdentificacaoPessoaFisica.buildFromArrayValues(values);
+                identificacaoPessoaFisica = IdentificacaoPessoaFisica.buildFromArray(values);
             } else if (l == 1) {
                 parametrosTributacao = ParametrosTributacao.buildFromArray(values);
             } else if (l == 2) {
