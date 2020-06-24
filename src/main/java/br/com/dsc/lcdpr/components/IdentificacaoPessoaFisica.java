@@ -49,7 +49,7 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
     @Builder.Default
     @JsonProperty("cod_ver")
     private String codigoVersao = "0013"; //t = 4, o = sim, p = 0013
-    private Long cpf; //t = 11, o = sim
+    private String cpf; //t = 11, o = sim
     private String nome; //t = sem limite, o = sim
     @Builder.Default
     @JsonProperty("ind_sit_ini_per")
@@ -78,7 +78,7 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
         return IdentificacaoPessoaFisica.builder()
                 .nomeEsc(values[1])
                 .codigoVersao(values[2])
-                .cpf(Long.parseLong(values[3]))
+                .cpf(values[3])
                 .nome(values[4])
                 .indicadorInicioPeriodo(INICIO_PERIODO.getEnum(values[5]))
                 .situacaoEspecial(SITUACAO_ESPECIAL.getEnum(values[6]))
