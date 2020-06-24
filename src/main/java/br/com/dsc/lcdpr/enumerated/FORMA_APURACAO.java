@@ -42,4 +42,11 @@ public enum FORMA_APURACAO {
         }
     }
 
+    public static FORMA_APURACAO getEnum(String valor) {
+        if (valor != null) {
+            return getEnum(Integer.parseInt(valor));
+        }
+        return LIVRO_CAIXA;
+    }
+
 }

@@ -31,7 +31,7 @@ public abstract class LcdprPipeConverter {
         } else if (object.getClass().isEnum()) {
             object = tryCatch(object, obj -> obj.getClass().getMethod("getValor").invoke(obj));
         } else if (object.getClass() == BigDecimal.class) {
-            object = ((BigDecimal) object).setScale(2).toPlainString().replaceAll("[.,]*", "");
+            object = BigDecimalUtil.bigDecimalToStringAndRemovePuncts((BigDecimal) object);
         }
         return String.valueOf(object).concat("|");
     }

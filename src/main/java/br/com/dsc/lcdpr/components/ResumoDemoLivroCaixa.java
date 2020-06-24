@@ -8,6 +8,7 @@ package br.com.dsc.lcdpr.components;
 import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import br.com.dsc.lcdpr.serializers.BigDecimalSerializer;
+import br.com.dsc.lcdpr.util.BigDecimalUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -16,6 +17,8 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Registro Q200: Resumo Mensal do Demonstrativo do Resultado da Atividade Rural
@@ -55,5 +58,19 @@ public class ResumoDemoLivroCaixa implements Serializable, LcdprHandler {
     @Builder.Default
     @JsonProperty("nat_sld_fin")
     private NATUREZA_SALDO_FINAL naturezaSaldoFinal = NATUREZA_SALDO_FINAL.POSITIVO;
+
+    public static ResumoDemoLivroCaixa buildFromArray(String[] values) {
+        return ResumoDemoLivroCaixa.builder()
+                .mes(values[1])
+                .valorEntrada(BigDecimalUtil.stringToBigDecimal(values[2], 2))
+                .valorSaida(BigDecimalUtil.stringToBigDecimal(values[3], 2))
+                .saldoFinal(BigDecimalUtil.stringToBigDecimal(values[4], 2))
+                .naturezaSaldoFinal(NATUREZA_SALDO_FINAL.getEnum(values[5]))
+                .build();
+    }
+
+    public static List<ResumoDemoLivroCaixa> buildFromLinesList(List<String> lines) {
+        return lines.stream().map(l -> buildFromArray(l.split("\\|"))).collect(Collectors.toList());
+    }
 
 }

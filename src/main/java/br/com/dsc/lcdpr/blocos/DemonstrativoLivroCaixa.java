@@ -16,6 +16,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Q - Apresenta o demonstrativo do resultado da atividade rural
@@ -49,6 +50,12 @@ public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
 
     public DemonstrativoLivroCaixa addResumoDemonstrativoLivroCaixa(ResumoDemoLivroCaixa resumoDemoLivroCaixa) {
         resumoDemonstrativoLivroCaixa.add(resumoDemoLivroCaixa);
+        return this;
+    }
+
+    public DemonstrativoLivroCaixa buildFromLinesList(List<String> lines) {
+        demonstrativoLivroCaixa = DemoLivroCaixa.buildFromLinesList(lines.stream().filter(l -> l.contains("Q100")).collect(Collectors.toList()));
+        resumoDemonstrativoLivroCaixa = ResumoDemoLivroCaixa.buildFromLinesList(lines.stream().filter(l -> l.contains("Q200")).collect(Collectors.toList()));
         return this;
     }
 

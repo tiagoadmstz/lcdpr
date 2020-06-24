@@ -11,6 +11,7 @@ import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import br.com.dsc.lcdpr.serializers.BigDecimalSerializer;
 import br.com.dsc.lcdpr.serializers.LocalDateSerializer;
+import br.com.dsc.lcdpr.util.BigDecimalUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -20,6 +21,9 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Registro Q100: Demonstrativo do Resultado da Atividade Rural
@@ -81,5 +85,27 @@ public class DemoLivroCaixa implements Serializable, LcdprHandler {
     @Builder.Default
     @JsonProperty("nat_sld_fin")
     private NATUREZA_SALDO_FINAL naturezaSaldoFinal = NATUREZA_SALDO_FINAL.POSITIVO;
+
+    public static DemoLivroCaixa buildFromArray(String[] values) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        return DemoLivroCaixa.builder()
+                .data(LocalDate.parse(values[1], formatter))
+                .codigoImovel(values[2])
+                .codigoConta(values[3])
+                .numeroDocumento(values[4])
+                .tipoDocumento(TIPO_DOCUMENTO.getEnum(values[5]))
+                .historico(values[6])
+                .cpfCnpjParticipante(values[7])
+                .tipoLancamento(TIPO_LANCAMENTO.getEnum(values[8]))
+                .valorEntrada(BigDecimalUtil.stringToBigDecimal(values[9], 2))
+                .valorSaida(BigDecimalUtil.stringToBigDecimal(values[10], 2))
+                .saldoFinal(BigDecimalUtil.stringToBigDecimal(values[11], 2))
+                .naturezaSaldoFinal(NATUREZA_SALDO_FINAL.getEnum(values[12]))
+                .build();
+    }
+
+    public static List<DemoLivroCaixa> buildFromLinesList(List<String> lines) {
+        return lines.stream().map(l -> buildFromArray(l.split("\\|"))).collect(Collectors.toList());
+    }
 
 }
