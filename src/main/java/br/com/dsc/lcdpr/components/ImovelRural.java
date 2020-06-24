@@ -1,6 +1,6 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template file, choose Tools "," Templates
  * and open the template in the editor.
  */
 package br.com.dsc.lcdpr.components;
@@ -76,5 +76,32 @@ public class ImovelRural implements Serializable, LcdprHandler {
     @JsonProperty("tipo_exploracao")
     private TIPO_EXPLORACAO tipoExploracao = TIPO_EXPLORACAO.IMOVEL_PROPRIO; // t = 1, o = sim
     private String participacao; // t = 4, o = sim
+
+    /**
+     * String[] values = {"0040","001","BR","BRL","12345678","12345678901234","12345678901234","Fazenda Tudo Certo","Rodovia BR 999, Km 3000|||Distrito do Meio","DF","5300108","71000000","2","05000"}
+     *
+     * @param values String[] with values in same order of the document
+     * @return ImovelRural
+     */
+    public static ImovelRural buildFromArray(String[] values) {
+        return ImovelRural.builder()
+                .codigoImovel(values[1])
+                .pais(values[2])
+                .moeda(values[3])
+                .cadastroImpostoTerritorialRural(values[4])
+                .cadastroAtividadeEconomicaPessoaFisica(values[5])
+                .inscricaoEstadual(values[6])
+                .nomeImovel(values[7])
+                .endereco(values[8])
+                .numero(values[9])
+                .complemento(values[10])
+                .bairro(values[11])
+                .uf(values[12])
+                .codigoMunicipio(values[13])
+                .cep(values[14])
+                .tipoExploracao(TIPO_EXPLORACAO.getEnum(Integer.parseInt(values[15])))
+                .participacao(values[16])
+                .build();
+    }
 
 }

@@ -25,10 +25,31 @@ public enum SITUACAO_ESPECIAL {
     SITUACAO_ESPECIAL(String valor) {
         this.valor = valor;
     }
-    
+
     @JsonValue
     public String getValor() {
         return valor;
+    }
+
+    public static SITUACAO_ESPECIAL getEnum(int valor) {
+        switch (valor) {
+            default:
+            case 0:
+                return NORMAL;
+            case 1:
+                return FALECIMENTO;
+            case 2:
+                return ESPOLIO;
+            case 3:
+                return SAIDA_DEFINITIVA_PAIS;
+        }
+    }
+
+    public static SITUACAO_ESPECIAL getEnum(String valor) {
+        if (valor != null) {
+            return getEnum(Integer.parseInt(valor));
+        }
+        return NORMAL;
     }
 
 }

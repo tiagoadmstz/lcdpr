@@ -52,4 +52,24 @@ public class Contribuinte implements Serializable, LcdprHandler {
     private Long numeroTelefone; //t = 15, o = não
     private String email; //t = 115, o = sim
 
+    /**
+     * String[] values = {"0030","RUA TESTE","1234","BLOCO Z SALA 301","BAIRRO LCDPR","DF","5300108","71000000","6133333333","testeLCDPR@LCDPR.com.br"}
+     *
+     * @param values String[] with values in same order of the document
+     * @return Contribuinte
+     */
+    public static Contribuinte buildFromArray(String[] values) {
+        return Contribuinte.builder()
+                .endereco(values[1])
+                .numero(values[2])
+                .complemento(values[3])
+                .bairro(values[4])
+                .uf(values[5])
+                .codigoMunicipio(values[6])
+                .cep(values[7])
+                .numeroTelefone(Long.parseLong(values[8]))
+                .email(values[9])
+                .build();
+    }
+
 }

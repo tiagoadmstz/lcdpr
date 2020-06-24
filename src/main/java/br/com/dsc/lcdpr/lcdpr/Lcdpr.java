@@ -33,7 +33,7 @@ import java.io.Serializable;
 @JsonPropertyOrder({
         "bloco0", "blocoQ", "bloco9"
 })
-public class LCDPR implements Serializable, LcdprHandler {
+public class Lcdpr implements Serializable, LcdprHandler {
 
     private static final long serialVersionUID = 9197775706508460101L;
     @JsonProperty("bloco_0")

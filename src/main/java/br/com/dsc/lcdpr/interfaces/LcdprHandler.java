@@ -19,7 +19,7 @@ import static br.com.dsc.lcdpr.util.ExceptionUtil.tryCatch;
  */
 public interface LcdprHandler {
 
-    default String generatedPipeText() {
+    default String generatePipeText() {
         String result = "";
         try {
             Field[] fields = getClass().getDeclaredFields();
@@ -33,13 +33,13 @@ public interface LcdprHandler {
                             try {
                                 if (ob.getClass().getSuperclass() == AbstractList.class) {
                                     for (Object item : ((List) ob)) {
-                                        rst += String.valueOf(item.getClass().getMethod("generatedPipeText").invoke(item));
+                                        rst += String.valueOf(item.getClass().getMethod("generatePipeText").invoke(item));
                                     }
                                 } else {
-                                    rst = String.valueOf(ob.getClass().getMethod("generatedPipeText").invoke(ob));
+                                    rst = String.valueOf(ob.getClass().getMethod("generatePipeText").invoke(ob));
                                 }
                                 return rst;
-                            } catch (Exception e) {
+                            } catch (Exception ex) {
                             }
                             return LcdprPipeConverter.convertToLcdprPattern(ob);
                         }

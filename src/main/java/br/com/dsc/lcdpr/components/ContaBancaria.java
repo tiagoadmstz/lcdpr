@@ -1,6 +1,6 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template file, choose Tools "," Templates
  * and open the template in the editor.
  */
 package br.com.dsc.lcdpr.components;
@@ -51,5 +51,22 @@ public class ContaBancaria implements Serializable, LcdprHandler {
     private String agencia; // t = 4, o = sim
     @JsonProperty("num_conta")
     private String numeroConta; // t = 16, o = sim
+
+    /**
+     * String[] values = {"0050","001","BR","999","Banco LCDPR","1234","0000000123456789"}
+     *
+     * @param values String[] with values in same order of the document
+     * @return ContaBancaria
+     */
+    public static ContaBancaria buildFromArray(String[] values) {
+        return ContaBancaria.builder()
+                .codigoConta(values[1])
+                .paisConta(values[2])
+                .banco(values[3])
+                .nomeBanco(values[4])
+                .agencia(values[5])
+                .numeroConta(values[6])
+                .build();
+    }
 
 }

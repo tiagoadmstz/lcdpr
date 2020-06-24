@@ -1,6 +1,6 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template file, choose Tools "," Templates
  * and open the template in the editor.
  */
 package br.com.dsc.lcdpr.components;
@@ -54,5 +54,21 @@ public class CadastroTerceiro implements Serializable, LcdprHandler {
     private String nomeContraparte; //t = 50, o = sim
     @JsonProperty("perc_contraparte")
     private String percentualContraparte; //t = 3, o = sim
+
+    /**
+     * String[] values = {"0045","002","3","12345678912","JOÃO DE SOUSA","00520"}
+     *
+     * @param values String[] with values in same order of the document
+     * @return CadastroTerceiro
+     */
+    public static CadastroTerceiro buildFromArray(String[] values) {
+        return CadastroTerceiro.builder()
+                .codigoImovel(values[1])
+                .tipoContraparte(TIPO_CONTRAPARTE.getEnum(Integer.parseInt(values[2])))
+                .cpfCnpjContraparte(values[3])
+                .nomeContraparte(values[4])
+                .percentualContraparte(values[5])
+                .build();
+    }
 
 }
