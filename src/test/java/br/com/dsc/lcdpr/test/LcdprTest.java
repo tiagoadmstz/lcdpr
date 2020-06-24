@@ -68,7 +68,7 @@ public class LcdprTest {
     public static AberturaIdentificacao generateBloco0() {
         //0000|LCDPR|0013|11111111191|JOSÉ DA SILVA|0|0||01012019|31122019
         IdentificacaoPessoaFisica identificacaoPessoaFisica = IdentificacaoPessoaFisica.builder()
-                .cpf(11111111191L)
+                .cpf("11111111191L")
                 .nome("JOSÉ DA SILVA")
                 .dataInicioPeriodo(Datas.stringToLocalDate("01/01/2019"))
                 .dataFinalPeriodo(Datas.stringToLocalDate("01/01/2019"))
@@ -183,7 +183,7 @@ public class LcdprTest {
         //9999|JOSE DE SOUZA|12345678912|AL123456O| testeLCDPR@LCDPR.com.br|6133333333|8007
         return EncerramentoArquivo.builder()
                 .nomeContador("JOSE DE SOUZA")
-                .cpfCnpjContador(12345678912L)
+                .cpfCnpjContador("12345678912L")
                 .numeroConselhoRegionalContabilidade("AL123456O")
                 .emailContador("testeLCDPR@LCDPR.com.br")
                 .telefoneContador(6133333333L)

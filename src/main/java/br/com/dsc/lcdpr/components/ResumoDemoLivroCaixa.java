@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.components;
 
+import br.com.dsc.lcdpr.deserializers.BigDecimalDeserializer;
 import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import br.com.dsc.lcdpr.serializers.BigDecimalSerializer;
@@ -12,6 +13,7 @@ import br.com.dsc.lcdpr.util.BigDecimalUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
@@ -46,14 +48,17 @@ public class ResumoDemoLivroCaixa implements Serializable, LcdprHandler {
     @Builder.Default
     @JsonProperty("vl_entrada")
     @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal valorEntrada = new BigDecimal(0); // t = 19d2, o = nao
     @Builder.Default
     @JsonProperty("vl_saida")
     @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal valorSaida = new BigDecimal(0); // t = 19d2, o = nao
     @Builder.Default
     @JsonProperty("sld_fin")
     @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal saldoFinal = new BigDecimal(0); // t = 19d2, o = nao
     @Builder.Default
     @JsonProperty("nat_sld_fin")

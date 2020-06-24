@@ -43,7 +43,7 @@ public class EncerramentoArquivo implements Serializable, LcdprHandler {
     @JsonProperty("ident_nom")
     private String nomeContador; // t = sem limite, o = nao
     @JsonProperty("ident_cpf_cnpj")
-    private Long cpfCnpjContador; // t = 11-14, o = nao
+    private String cpfCnpjContador; // t = 11-14, o = nao
     @JsonProperty("ind_crc")
     private String numeroConselhoRegionalContabilidade; // t = sem limite, o = nao
     @JsonProperty("email")
