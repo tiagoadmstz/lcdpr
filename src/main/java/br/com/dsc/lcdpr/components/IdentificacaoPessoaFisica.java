@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.components;
 
+import br.com.dsc.lcdpr.deserializers.LocalDateDeserializer;
 import br.com.dsc.lcdpr.enumerated.INICIO_PERIODO;
 import br.com.dsc.lcdpr.enumerated.SITUACAO_ESPECIAL;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
@@ -12,6 +13,7 @@ import br.com.dsc.lcdpr.serializers.LocalDateSerializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
@@ -59,12 +61,15 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
     private SITUACAO_ESPECIAL situacaoEspecial = SITUACAO_ESPECIAL.NORMAL; //t = 1, o = sim
     @JsonProperty("dt_sit_esp")
     @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate dataSituacaoEspecial; //t = 8, o = não
     @JsonProperty("dt_ini")
     @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate dataInicioPeriodo; //t = 8, o = sim
     @JsonProperty("dt_fin")
     @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate dataFinalPeriodo; //t = 8, o = sim
 
     /**

@@ -5,6 +5,8 @@
  */
 package br.com.dsc.lcdpr.components;
 
+import br.com.dsc.lcdpr.deserializers.BigDecimalDeserializer;
+import br.com.dsc.lcdpr.deserializers.LocalDateDeserializer;
 import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
 import br.com.dsc.lcdpr.enumerated.TIPO_DOCUMENTO;
 import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
@@ -15,6 +17,7 @@ import br.com.dsc.lcdpr.util.BigDecimalUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
@@ -54,6 +57,7 @@ public class DemoLivroCaixa implements Serializable, LcdprHandler {
     private String registro = "Q100"; //t = 4, o = sim, p = Q100
     @Builder.Default
     @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate data = LocalDate.now(); //t = 8, o = sim
     @JsonProperty("cod_imovel")
     private String codigoImovel; //t = 3, o = sim
@@ -73,14 +77,17 @@ public class DemoLivroCaixa implements Serializable, LcdprHandler {
     @Builder.Default
     @JsonProperty("vl_entrada")
     @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal valorEntrada = new BigDecimal(0); //t = 19d2, o = nao
     @Builder.Default
     @JsonProperty("vl_saida")
     @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal valorSaida = new BigDecimal(0); //t = 19d2, o = nao
     @Builder.Default
     @JsonProperty("sld_fin")
     @JsonSerialize(using = BigDecimalSerializer.class)
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
     private BigDecimal saldoFinal = new BigDecimal(0); //t = 19d2, o = sim
     @Builder.Default
     @JsonProperty("nat_sld_fin")
