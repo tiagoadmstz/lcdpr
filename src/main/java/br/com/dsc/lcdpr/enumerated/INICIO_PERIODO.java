@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.enumerated;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -31,6 +32,7 @@ public enum INICIO_PERIODO {
         return valor;
     }
 
+    @JsonCreator
     public static INICIO_PERIODO getEnum(int valor) {
         switch (valor) {
             default:

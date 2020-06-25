@@ -39,6 +39,24 @@ public abstract class LcdprUtil {
     }
 
     /**
+     * Export LCDPR root class for json file with pattern format
+     *
+     * @param lcdpr Lcdpr class
+     * @param date  LocalDate to append in the file name
+     * @return true if successful
+     */
+    public static boolean exportLcdprJson(Lcdpr lcdpr, LocalDate date) {
+        return ExceptionUtil.tryCatch(false, ef -> {
+            File jsonFile = new File("LCDPR_" + date.format(DateTimeFormatter.ofPattern("ddMMyyyy")) + ".json");
+            FileOutputStream fileOutputStream = new FileOutputStream(jsonFile);
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(fileOutputStream, lcdpr);
+            fileOutputStream.close();
+            return true;
+        });
+    }
+
+    /**
      * Imports text file in the pattern format to Java class Lcdr
      *
      * @param txtFile File LCDPR
@@ -47,11 +65,10 @@ public abstract class LcdprUtil {
     public static Lcdpr importLcdprFromTxtFile(File txtFile) {
         return ExceptionUtil.tryCatch(null, ef -> {
             List<String> lines = readLines(new FileInputStream(txtFile));
-            DemonstrativoLivroCaixa demonstrativoLivroCaixa = new DemonstrativoLivroCaixa();
-            EncerramentoArquivo encerramentoArquivo = new EncerramentoArquivo();
             return Lcdpr.builder()
                     .bloco0(new AberturaIdentificacao().buildFromLinesList(lines))
                     .blocoQ(new DemonstrativoLivroCaixa().buildFromLinesList(lines))
+                    .bloco9(new EncerramentoArquivo().buildFromLinesList(lines))
                     .build();
         });
     }

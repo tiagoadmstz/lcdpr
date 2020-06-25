@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.enumerated;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -32,6 +33,7 @@ public enum FORMA_APURACAO {
         return valor;
     }
 
+    @JsonCreator
     public static FORMA_APURACAO getEnum(int valor) {
         switch (valor) {
             default:

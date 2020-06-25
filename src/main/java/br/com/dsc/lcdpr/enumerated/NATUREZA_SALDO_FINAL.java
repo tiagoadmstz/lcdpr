@@ -1,5 +1,6 @@
 package br.com.dsc.lcdpr.enumerated;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -23,6 +24,7 @@ public enum NATUREZA_SALDO_FINAL {
         return valor;
     }
 
+    @JsonCreator
     public static NATUREZA_SALDO_FINAL getEnum(String valor) {
         switch (valor) {
             case "N":

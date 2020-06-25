@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.enumerated;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -38,6 +39,7 @@ public enum TIPO_DOCUMENTO {
         return valor;
     }
 
+    @JsonCreator
     public static TIPO_DOCUMENTO getEnum(int valor) {
         switch (valor) {
             default:
