@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.enumerated;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -45,6 +46,7 @@ public enum SITUACAO_ESPECIAL {
         }
     }
 
+    @JsonCreator
     public static SITUACAO_ESPECIAL getEnum(String valor) {
         if (valor != null) {
             return getEnum(Integer.parseInt(valor));

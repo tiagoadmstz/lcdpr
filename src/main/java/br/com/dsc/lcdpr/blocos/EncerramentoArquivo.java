@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Registro 9999: Identificação do Signatário do LCDPR e Encerramento do Arquivo Digital
@@ -52,5 +54,18 @@ public class EncerramentoArquivo implements Serializable, LcdprHandler {
     private Long telefoneContador; // t = 15, o = nao
     @JsonProperty("qtd_lin")
     private Integer quantidadeRegistrosArquivo; // t = 30, o = sim
+
+    public EncerramentoArquivo buildFromLinesList(List<String> lines) {
+        Optional<String[]> optional = lines.stream().filter(l -> l.contains("9999")).map(l -> l.split("\\|")).findFirst();
+        return optional.map(values -> EncerramentoArquivo.builder()
+                .nomeContador(values[1])
+                .cpfCnpjContador(values[2])
+                .numeroConselhoRegionalContabilidade(values[3])
+                .emailContador(values[4])
+                .telefoneContador(values[5] != null ? Long.parseLong(values[5]) : null)
+                .quantidadeRegistrosArquivo(values[6] != null ? Integer.parseInt(values[6]) : null)
+                .build()
+        ).orElse(null);
+    }
 
 }
