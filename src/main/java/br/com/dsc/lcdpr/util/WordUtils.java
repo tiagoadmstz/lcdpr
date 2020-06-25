@@ -1,12 +1,18 @@
 package br.com.dsc.lcdpr.util;
 
+import java.text.Normalizer;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class WordUtils {
 
+    /**
+     * Makes the first letter of each word capitalized
+     * Ex: capitalize("the first letter is uppercase") = "The First Letter is Uppercase"
+     *
+     * @param text
+     * @return String result
+     */
     public static String capitalize(String text) {
         return Arrays.stream(text.toLowerCase().split(" "))
                 .map(p -> p.length() > 2 ? p.replaceFirst("\\w{1}", firstLetter(p).toUpperCase()) : p
@@ -15,65 +21,75 @@ public abstract class WordUtils {
     }
 
     /**
-     * Preencher a esquerda
+     * Fill in the left
+     * Ex: lpad("1", 3, "0") = "001"
+     * lpad("1", 4, "X") = "XXX1"
      *
-     * @param texto
-     * @param tamanho
-     * @param preenchedor
+     * @param text
+     * @param size
+     * @param filler
      * @return
      */
-    public static String lpad(String texto, int tamanho, String preenchedor) {
-        try {
-            if (texto.length() < tamanho) {
+    public static String lpad(String text, int size, String filler) {
+        return ExceptionUtil.tryCatch(text, "", t -> {
+            String txt = (String) t;
+            if (txt.length() < size) {
                 String p = "";
-                for (int i = 0; i < (tamanho - texto.length()); i++) {
-                    p = p.concat(preenchedor);
+                for (int i = 0; i < (size - txt.length()); i++) {
+                    p = p.concat(filler);
                 }
-                texto = p.concat(texto);
+                txt = p.concat(txt);
             }
-            return texto;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
+            return txt;
+        });
     }
 
-    public static String removerAscentuacao(String text) {
-        try {
-            //Pattern p = Pattern.compile("[ÁÀÃÂÄáàãâäÉÈÊËéèêëÍÌÎÏíìîïÓÒÕÔÖóòôõöÚÙÛÜúùûü]");
-            //Matcher m = p.matcher(text);
-            Map<String, String> letras = new HashMap();
-            letras.put("[ÁÀÃÂÄ]", "A");
-            letras.put("[áàãâä]", "a");
-            letras.put("[ÉÈÊË]", "E");
-            letras.put("[éèêë]", "e");
-            letras.put("[ÍÌÎÏ]", "I");
-            letras.put("[íìîï]", "i");
-            letras.put("[ÓÒÕÔÖ]", "O");
-            letras.put("[óòôõö]", "o");
-            letras.put("[ÚÙÛÜ]", "U");
-            letras.put("[úùûü]", "u");
-            for (Map.Entry<String, String> entry : letras.entrySet()) {
-                text = text.replaceAll(entry.getKey(), entry.getValue());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return text;
+    /**
+     * Removes all accentuations from the text
+     *
+     * @param text
+     * @return String normalized
+     */
+    public static String removeAccentuarion(String text) {
+        return ExceptionUtil.tryCatch(text, text, t -> Normalizer.normalize((String) t, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
     }
 
+    /**
+     * Inverts case for first letter in paragraph
+     *
+     * @param string text
+     * @return String result
+     */
     public static String toogleFirstLetterCase(String string) {
         return string.replaceFirst(firstLetter(string), isUpperCase(string) ? firstLetter(string).toLowerCase() : firstLetter(string).toUpperCase());
     }
 
+    /**
+     * Gets first letter from the paragraph
+     *
+     * @param string text
+     * @return String first letter
+     */
     public static String firstLetter(String string) {
         return string.substring(0, 1);
     }
 
+    /**
+     * Verifies if text is in upper case
+     *
+     * @param string text
+     * @return true if it is in upper case
+     */
     public static boolean isUpperCase(String string) {
         return string.equals(string.toUpperCase());
     }
 
+    /**
+     * Verifies if text is in lower case
+     *
+     * @param string text
+     * @return true if it is in lower case
+     */
     public static boolean isLowerCase(String string) {
         return !isUpperCase(string);
     }
