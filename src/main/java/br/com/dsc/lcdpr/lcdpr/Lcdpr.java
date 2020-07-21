@@ -8,7 +8,6 @@ package br.com.dsc.lcdpr.lcdpr;
 import br.com.dsc.lcdpr.blocos.AberturaIdentificacao;
 import br.com.dsc.lcdpr.blocos.DemonstrativoLivroCaixa;
 import br.com.dsc.lcdpr.blocos.EncerramentoArquivo;
-import br.com.dsc.lcdpr.components.DemoLivroCaixa;
 import br.com.dsc.lcdpr.exceptions.ServiceException;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,7 +17,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -52,14 +50,19 @@ public class Lcdpr implements Serializable, LcdprHandler {
      * Makes calculating to the block Q.
      */
     public void recalculateBlockQ() {
-        if (blocoQ == null || blocoQ.getDemonstrativoLivroCaixa() == null) {
-            throw new ServiceException("Error when calculating Q100 and Q200 blocks. Block Q not found.");
-        }
-        blocoQ.getDemonstrativoLivroCaixa().stream().sorted(Comparator.comparing(DemoLivroCaixa::getData));
+        this.validate();
+        blocoQ.validate();
+        blocoQ.sortDemonstrativoLivroCaixaByData();
         blocoQ.startBlockQ200ByMonth();
         validateBlockQ();
         blocoQ.calculate();
         blocoQ.recalculateBlockQ200();
+    }
+
+    public void validate() {
+        if (blocoQ == null) {
+            throw new ServiceException("Error when calculating Q100 and Q200 blocks. Block Q not found.");
+        }
     }
 
     public void validateBlockQ() {

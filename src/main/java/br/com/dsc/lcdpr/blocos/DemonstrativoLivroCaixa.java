@@ -8,6 +8,7 @@ package br.com.dsc.lcdpr.blocos;
 import br.com.dsc.lcdpr.components.DemoLivroCaixa;
 import br.com.dsc.lcdpr.components.ResumoDemoLivroCaixa;
 import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
+import br.com.dsc.lcdpr.exceptions.ServiceException;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import br.com.dsc.lcdpr.util.WordUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -66,6 +68,18 @@ public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
 
     public int getOperationsYear() {
         return demonstrativoLivroCaixa.stream().map(d -> d.getData().getYear()).findFirst().orElseGet(() -> Year.now().getValue());
+    }
+
+    public void sortDemonstrativoLivroCaixaByData() {
+        demonstrativoLivroCaixa = demonstrativoLivroCaixa.stream().sorted(Comparator.comparing(DemoLivroCaixa::getData)).collect(Collectors.toList());
+    }
+
+    public void validate() {
+        List<String> messages = new ArrayList();
+        if (demonstrativoLivroCaixa == null) {
+            messages.add("BlockQ100 not found");
+        }
+        if (!messages.isEmpty()) throw new ServiceException(messages);
     }
 
     public BigDecimal calculate() {

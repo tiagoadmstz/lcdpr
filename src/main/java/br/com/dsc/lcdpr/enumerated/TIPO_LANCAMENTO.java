@@ -53,4 +53,16 @@ public enum TIPO_LANCAMENTO {
         return RECEITA_ATIVIDADE_RURAL;
     }
 
+    public static String getDescription(int valor) {
+        switch (valor) {
+            default:
+            case 1:
+                return "Receita de Atividade Rural";
+            case 2:
+                return "Despesas de Custeio de Investimentos";
+            case 3:
+                return "Receita de Produtos Entregues";
+        }
+    }
+
 }
