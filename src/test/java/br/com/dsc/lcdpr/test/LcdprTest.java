@@ -55,4 +55,13 @@ public class LcdprTest {
         assertEquals(lcdpr, jsonLcdpr);
     }
 
+    @Test
+    @Order(4)
+    public void validateAndCalculateTest() {
+        File file = new File("LCDPR.txt");
+        Lcdpr lcdpr = LcdprUtil.importLcdprFromTxtFile(file);
+        lcdpr.getBlocoQ().calculate();
+        System.out.println(lcdpr.getBlocoQ());
+    }
+
 }
