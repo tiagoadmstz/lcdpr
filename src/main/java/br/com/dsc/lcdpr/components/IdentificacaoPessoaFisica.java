@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.components;
 
+import br.com.dsc.lcdpr.annotations.Validation;
 import br.com.dsc.lcdpr.deserializers.LocalDateDeserializer;
 import br.com.dsc.lcdpr.enumerated.INICIO_PERIODO;
 import br.com.dsc.lcdpr.enumerated.SITUACAO_ESPECIAL;
@@ -44,33 +45,43 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
     private static final long serialVersionUID = -1849600283483749425L;
     @Builder.Default
     @JsonProperty("reg")
-    private String registro = "0000"; //t = 4, o = sim, p = 0000
+    @Validation(size = 4, defaultValue = "0000")
+    private String registro = "0000";
     @Builder.Default
     @JsonProperty("nome_esc")
-    private String nomeEsc = "LCDPR"; //t = 5, o = sim, p = LCDPR
+    @Validation(size = 5, defaultValue = "LCDPR")
+    private String nomeEsc = "LCDPR";
     @Builder.Default
     @JsonProperty("cod_ver")
-    private String codigoVersao = "0013"; //t = 4, o = sim, p = 0013
-    private String cpf; //t = 11, o = sim
-    private String nome; //t = sem limite, o = sim
+    @Validation(size = 4, defaultValue = "0013")
+    private String codigoVersao = "0013";
+    @Validation(type = 'N', size = 11)
+    private String cpf;
+    @Validation
+    private String nome;
     @Builder.Default
     @JsonProperty("ind_sit_ini_per")
-    private INICIO_PERIODO indicadorInicioPeriodo = INICIO_PERIODO.REGULAR; //t = 1, o = sim
+    @Validation(type = 'N', size = 1)
+    private INICIO_PERIODO indicadorInicioPeriodo = INICIO_PERIODO.REGULAR;
     @Builder.Default
     @JsonProperty("sit_especial")
-    private SITUACAO_ESPECIAL situacaoEspecial = SITUACAO_ESPECIAL.NORMAL; //t = 1, o = sim
+    @Validation(type = 'N', size = 1)
+    private SITUACAO_ESPECIAL situacaoEspecial = SITUACAO_ESPECIAL.NORMAL;
     @JsonProperty("dt_sit_esp")
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate dataSituacaoEspecial; //t = 8, o = não
+    @Validation(type = 'N', size = 8, required = 'N')
+    private LocalDate dataSituacaoEspecial;
     @JsonProperty("dt_ini")
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate dataInicioPeriodo; //t = 8, o = sim
+    @Validation(type = 'N', size = 8)
+    private LocalDate dataInicioPeriodo;
     @JsonProperty("dt_fin")
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate dataFinalPeriodo; //t = 8, o = sim
+    @Validation(type = 'N', size = 8)
+    private LocalDate dataFinalPeriodo;
 
     /**
      * String[] values = {"0000","LCDPR","0013","11111111191","JOSÉ DA SILVA","0","0","","01012019","31122019"}

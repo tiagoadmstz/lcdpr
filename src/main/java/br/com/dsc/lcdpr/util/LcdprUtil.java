@@ -9,6 +9,7 @@ import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
 import br.com.dsc.lcdpr.exceptions.ServiceException;
 import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.imageio.plugins.common.InputStreamAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;

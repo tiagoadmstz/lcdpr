@@ -15,6 +15,7 @@ public abstract class ExceptionUtil {
         try {
             return (R) exceptionFunction.apply(defaultReturn);
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return defaultReturn;
     }
