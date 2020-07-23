@@ -65,4 +65,22 @@ public enum TIPO_DOCUMENTO {
         return NOTA_FISCAL;
     }
 
+    public static String getDescription(int valor) {
+        switch (valor) {
+            default:
+            case 1:
+                return "Nota Fiscal";
+            case 2:
+                return "Fatura";
+            case 3:
+                return "Recibo";
+            case 4:
+                return "Contrato";
+            case 5:
+                return "Folha de Pagamento";
+            case 6:
+                return "Outros";
+        }
+    }
+
 }

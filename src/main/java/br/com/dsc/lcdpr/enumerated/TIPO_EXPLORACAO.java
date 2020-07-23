@@ -58,4 +58,22 @@ public enum TIPO_EXPLORACAO {
         }
     }
 
+    public static String getDescription(int valor) {
+        switch (valor) {
+            case 1:
+            default:
+                return "Imóvel Próprio";
+            case 2:
+                return "Condomínio";
+            case 3:
+                return "Imóvel Arrendado";
+            case 4:
+                return "Parceria";
+            case 5:
+                return "Comodato";
+            case 6:
+                return "Outros";
+        }
+    }
+
 }

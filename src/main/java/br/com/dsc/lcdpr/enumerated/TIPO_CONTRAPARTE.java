@@ -53,4 +53,20 @@ public enum TIPO_CONTRAPARTE {
         }
     }
 
+    public String getDescription(int valor){
+        switch (valor) {
+            case 1:
+            default:
+                return "Condomínio";
+            case 2:
+                return "Arrendador";
+            case 3:
+                return "Parceiro";
+            case 4:
+                return "Comodante";
+            case 5:
+                return "Outro";
+        }
+    }
+
 }

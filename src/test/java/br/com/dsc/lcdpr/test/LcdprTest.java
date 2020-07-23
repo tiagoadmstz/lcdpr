@@ -57,6 +57,15 @@ public class LcdprTest {
 
     @Test
     @Order(4)
+    public void validateAndCalculateTest() {
+        File file = new File("LCDPR.txt");
+        Lcdpr lcdpr = LcdprUtil.importLcdprFromTxtFile(file);
+        lcdpr.getBlocoQ().calculate();
+        System.out.println(lcdpr.getBlocoQ());
+    }
+  
+    @Test
+    @Order(5)
     public void lcdprValidationTest() {
         Lcdpr lcdpr = DummyData.generateLcdpr();
         boolean validate = lcdpr.getBloco0().getIdentificacaoPessoaFisica().validate();

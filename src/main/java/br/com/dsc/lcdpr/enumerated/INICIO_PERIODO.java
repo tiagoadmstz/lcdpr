@@ -52,4 +52,16 @@ public enum INICIO_PERIODO {
         return REGULAR;
     }
 
+    public static String getDescription(int valor) {
+        switch (valor) {
+            default:
+            case 0:
+                return "Regular";
+            case 1:
+                return "Abertura";
+            case 2:
+                return "Obrigatório Escrituração";
+        }
+    }
+
 }
