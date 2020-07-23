@@ -5,10 +5,9 @@ import br.com.dsc.lcdpr.blocos.DemonstrativoLivroCaixa;
 import br.com.dsc.lcdpr.blocos.EncerramentoArquivo;
 import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.imageio.plugins.common.InputStreamAdapter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

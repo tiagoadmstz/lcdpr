@@ -4,13 +4,13 @@
       "reg": ["C", 4, "S", "0000"],
       "nome_esc": ["C", 5, "S", "LCDPR"],
       "cod_ver": ["C", 4, "S", "0013"],
-      "cpf": ["C", 11, "S", ""],
-      "nome": ["C", 0, "S", ""],
+      "cpf": ["N", 11, "S", ""],
+      "nome": ["C", 255, "S", ""],
       "ind_sit_ini_per": ["N", 1, "S", 0],
-      "sit_especial": ["C", 1, "S", "0"],
-      "dt_sit_esp": ["", 8, "N", ""],
-      "dt_ini": ["", 8, "N", ""],
-      "dt_fin": ["", 8, "N", ""]
+      "sit_especial": ["N", 1, "S", "0"],
+      "dt_sit_esp": ["N", 8, "N", ""],
+      "dt_ini": ["N", 8, "S", ""],
+      "dt_fin": ["N", 8, "S", ""]
     },
     "parametros_tributacao": {
       "reg": ["C", 4, "S", "0010"],
