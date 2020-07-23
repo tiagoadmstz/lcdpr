@@ -35,4 +35,14 @@ public enum NATUREZA_SALDO_FINAL {
         }
     }
 
+    public static String getDescription(String valor) {
+        switch (valor) {
+            case "N":
+                return "Negativo";
+            default:
+            case "P":
+                return "Positivo";
+        }
+    }
+
 }

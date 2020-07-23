@@ -3,15 +3,24 @@ package br.com.dsc.lcdpr.util;
 import br.com.dsc.lcdpr.blocos.AberturaIdentificacao;
 import br.com.dsc.lcdpr.blocos.DemonstrativoLivroCaixa;
 import br.com.dsc.lcdpr.blocos.EncerramentoArquivo;
+import br.com.dsc.lcdpr.components.DemoLivroCaixa;
+import br.com.dsc.lcdpr.components.ResumoDemoLivroCaixa;
+import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
+import br.com.dsc.lcdpr.exceptions.ServiceException;
 import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.imageio.plugins.common.InputStreamAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.apache.commons.io.IOUtils.readLines;
 import static org.apache.commons.io.IOUtils.write;

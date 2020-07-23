@@ -54,4 +54,25 @@ public enum SITUACAO_ESPECIAL {
         return NORMAL;
     }
 
+    public static String getDescription(String valor) {
+        if (valor != null) {
+            return getDescription(Integer.parseInt(valor));
+        }
+        return "Normal";
+    }
+
+    public static String getDescription(int valor) {
+        switch (valor) {
+            default:
+            case 0:
+                return "Normal";
+            case 1:
+                return "Falecimento";
+            case 2:
+                return "Espolio";
+            case 3:
+                return "Saída Definitiva País";
+        }
+    }
+
 }

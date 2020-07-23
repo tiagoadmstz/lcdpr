@@ -5,11 +5,13 @@
  */
 package br.com.dsc.lcdpr.components;
 
+import br.com.dev.engine.date.Datas;
 import br.com.dsc.lcdpr.deserializers.BigDecimalDeserializer;
 import br.com.dsc.lcdpr.deserializers.LocalDateDeserializer;
 import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
 import br.com.dsc.lcdpr.enumerated.TIPO_DOCUMENTO;
 import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
+import br.com.dsc.lcdpr.exceptions.ServiceException;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import br.com.dsc.lcdpr.serializers.BigDecimalSerializer;
 import br.com.dsc.lcdpr.serializers.LocalDateSerializer;
@@ -25,6 +27,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,6 +116,53 @@ public class DemoLivroCaixa implements Serializable, LcdprHandler {
 
     public static List<DemoLivroCaixa> buildFromLinesList(List<String> lines) {
         return lines.stream().map(l -> buildFromArray(l.split("\\|"))).collect(Collectors.toList());
+    }
+
+    public String entryDescription() {
+        return String.format("%s - %s, Valor %s: R$ %.2f",
+                Datas.getDateString(data),
+                historico,
+                valorEntrada != null && valorSaida == null ? "entrada" : "saída",
+                valorEntrada != null && valorSaida == null ? valorEntrada : valorSaida);
+    }
+
+    public List<String> validate(LocalDate dataInicio, LocalDate dataFinal) {
+        List<String> messages = new ArrayList();
+        if (valorEntrada == null && valorSaida == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'Valor de Entrada ou de Saída'.", entryDescription()));
+        }
+        if (BigDecimal.ZERO.compareTo(valorEntrada) != 0 && BigDecimal.ZERO.compareTo(valorSaida) != 0) {
+            messages.add(ServiceException.buildMessage("Operação '{}' não pode conter valor de entrada e de saída simultâneamente.", entryDescription()));
+        }
+        if (codigoImovel == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'Código do imóvel'.", entryDescription()));
+        }
+        if (codigoConta == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'Código da conta'.", entryDescription()));
+        }
+        if (data == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'Data'.", entryDescription()));
+        } else {
+            if (data.isBefore(dataInicio)) {
+                messages.add(ServiceException.buildMessage("Operação '{}' anterior ao  'Início do período' dessa declaração (Bloco 0000).", entryDescription()));
+            }
+            if (data.isAfter(dataFinal)) {
+                messages.add(ServiceException.buildMessage("Operação '{}' posterior ao  'Final do período' dessa declaração (Bloco 0000).", entryDescription()));
+            }
+        }
+        if (entryDescription() == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'Histórico/Descrição'.", entryDescription()));
+        }
+        if (tipoDocumento == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'Tipo de documento'.", entryDescription()));
+        }
+        if (tipoLancamento == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'Tipo de lançamento'.", entryDescription()));
+        }
+        if (cpfCnpjParticipante == null) {
+            messages.add(ServiceException.buildMessage("Operação '{}' sem 'CPF/CNPJ'.", entryDescription()));
+        }
+        return messages;
     }
 
 }

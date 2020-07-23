@@ -51,4 +51,14 @@ public enum FORMA_APURACAO {
         return LIVRO_CAIXA;
     }
 
+    public static String getDescription(int valor){
+        switch (valor) {
+            default:
+            case 1:
+                return "Livro Caixa";
+            case 2:
+                return "Apuração Lucro";
+        }
+    }
+
 }
