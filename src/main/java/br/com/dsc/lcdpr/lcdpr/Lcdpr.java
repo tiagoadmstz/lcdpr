@@ -50,7 +50,7 @@ public class Lcdpr implements Serializable, LcdprHandler {
      * Makes calculating to the block Q.
      */
     public void recalculateBlockQ() {
-        this.validate();
+        this.isBlockQNull();
         blocoQ.validate();
         blocoQ.sortDemonstrativoLivroCaixaByData();
         blocoQ.startBlockQ200ByMonth();
@@ -59,7 +59,7 @@ public class Lcdpr implements Serializable, LcdprHandler {
         blocoQ.recalculateBlockQ200();
     }
 
-    public void validate() {
+    public void isBlockQNull() {
         if (blocoQ == null) {
             throw new ServiceException("Error when calculating Q100 and Q200 blocks. Block Q not found.");
         }

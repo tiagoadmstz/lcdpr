@@ -74,7 +74,7 @@ public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
         demonstrativoLivroCaixa = demonstrativoLivroCaixa.stream().sorted(Comparator.comparing(DemoLivroCaixa::getData)).collect(Collectors.toList());
     }
 
-    public void validate() {
+    public void validateBlockQ100() {
         List<String> messages = new ArrayList();
         if (demonstrativoLivroCaixa == null) {
             messages.add("BlockQ100 not found");

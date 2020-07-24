@@ -7,6 +7,7 @@ package br.com.dsc.lcdpr.util;
 
 import br.com.dev.engine.date.Datas;
 import br.com.dsc.lcdpr.annotations.Validation;
+import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -77,10 +78,19 @@ public abstract class LcdprPipeConverter {
     }
 
     public static String generatePipeText(Object object) {
-        String result = getFields(object.getClass()).stream()
+        String result = getFields(filterSubClasses(object)).stream()
                 .map(f -> executeMethodRecursively(getFieldValue(object, f), "generatePipeText"))
                 .reduce("", String::concat);
         return result.length() > 0 ? result.substring(0, result.length() - 1).concat("\n") : result;
+    }
+
+    public static Class<?> filterSubClasses(Object object) {
+        if (object.getClass().getSuperclass() != null) {
+            if (object.getClass().getSuperclass() == Lcdpr.class) {
+                return object.getClass().getSuperclass();
+            }
+        }
+        return object.getClass();
     }
 
     public static boolean validateByAnnotation(Object object) {

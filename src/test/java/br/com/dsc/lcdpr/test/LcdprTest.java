@@ -55,7 +55,7 @@ public class LcdprTest {
         assertEquals(lcdpr, jsonLcdpr);
     }
 
-    @Test
+    //@Test
     @Order(4)
     public void validateAndCalculateTest() {
         File file = new File("LCDPR.txt");
@@ -63,13 +63,20 @@ public class LcdprTest {
         lcdpr.getBlocoQ().calculate();
         System.out.println(lcdpr.getBlocoQ());
     }
-  
-    @Test
+
+    //@Test
     @Order(5)
     public void lcdprValidationTest() {
         Lcdpr lcdpr = DummyData.generateLcdpr();
         boolean validate = lcdpr.getBloco0().getIdentificacaoPessoaFisica().validate();
         assertTrue(validate);
+    }
+
+    //@Test
+    @Order(6)
+    public void generatePipeTextFromSubClass() {
+        DocumentoLcdpr lcdpr = DummyData.generateDocumentoLcdpr();
+        System.out.println(lcdpr.generatePipeText());
     }
 
 }
