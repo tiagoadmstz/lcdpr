@@ -23,6 +23,15 @@ public abstract class DummyData {
                 .build();
     }
 
+    public static DocumentoLcdpr generateDocumentoLcdpr() {
+        DocumentoLcdpr documentoLcdpr = new DocumentoLcdpr();
+        documentoLcdpr.setId(1L);
+        documentoLcdpr.setBloco0(generateBloco0());
+        documentoLcdpr.setBlocoQ(generateBlocoQ());
+        documentoLcdpr.setBloco9(generateBloco9());
+        return documentoLcdpr;
+    }
+
     public static AberturaIdentificacao generateBloco0() {
         //0000|LCDPR|0013|11111111191|JOSÉ DA SILVA|0|0||01012019|31122019
         IdentificacaoPessoaFisica identificacaoPessoaFisica = IdentificacaoPessoaFisica.builder()
