@@ -11,6 +11,7 @@ import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
 import br.com.dsc.lcdpr.exceptions.ServiceException;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import br.com.dsc.lcdpr.util.WordUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -66,6 +67,7 @@ public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
         return this;
     }
 
+    @JsonIgnore
     public int getOperationsYear() {
         return demonstrativoLivroCaixa.stream().map(d -> d.getData().getYear()).findFirst().orElseGet(() -> Year.now().getValue());
     }
