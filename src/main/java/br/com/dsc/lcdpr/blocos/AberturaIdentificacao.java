@@ -32,7 +32,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "identificacaoPessoaFisica", "parametrosTributacao", "dadosCadastraisContribuinte",
-        "imoveisRurais", "cadastroTerceiros", "contasBancarias"
+        "imoveisRurais", "contasBancarias"
 })
 public class AberturaIdentificacao implements Serializable, LcdprHandler {
 
@@ -47,19 +47,11 @@ public class AberturaIdentificacao implements Serializable, LcdprHandler {
     @JsonProperty("imoveis_rurais")
     private List<ImovelRural> imoveisRurais = new ArrayList(); //H = 2, 0040, 1:N, o
     @Builder.Default
-    @JsonProperty("exploracao_imoveis_rurais")
-    private List<CadastroTerceiro> cadastroTerceiros = new ArrayList(); //H = 3, 0045, 1:N, f != o = Se 0040.PARTICIPACAO for menor que 100% ou 0040.TIPO_EXPLORACAO diferente de "1"
-    @Builder.Default
     @JsonProperty("contas_bancarias")
     private List<ContaBancaria> contasBancarias = new ArrayList(); //H = 2, 0050, 1:N, o
 
     public AberturaIdentificacao addImovelRural(ImovelRural imovelRural) {
         this.imoveisRurais.add(imovelRural);
-        return this;
-    }
-
-    public AberturaIdentificacao addCadastroTerceiro(CadastroTerceiro cadastroTerceiro) {
-        this.cadastroTerceiros.add(cadastroTerceiro);
         return this;
     }
 
@@ -80,7 +72,7 @@ public class AberturaIdentificacao implements Serializable, LcdprHandler {
             } else if (l == 3) {
                 addImovelRural(ImovelRural.buildFromArray(values));
             } else if (l == 4) {
-                addCadastroTerceiro(CadastroTerceiro.buildFromArray(values));
+                //addCadastroTerceiro(CadastroTerceiro.buildFromArray(values));
             } else if (l == 5) {
                 addContaBancaria(ContaBancaria.buildFromArray(values));
             } else {
