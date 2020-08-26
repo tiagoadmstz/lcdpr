@@ -12,6 +12,7 @@ import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
 import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 public abstract class DummyData {
 
@@ -68,15 +69,18 @@ public abstract class DummyData {
                 .cep("71000000")
                 .tipoExploracao(TIPO_EXPLORACAO.CONDOMINIO)
                 .participacao("05000")
+                .cadastroTerceiros(Arrays.asList(
+                        //0045|002|3|12345678912|JOÃO DE SOUSA|00520
+                        CadastroTerceiro.builder()
+                                .codigoImovel("002")
+                                .tipoContraparte(TIPO_CONTRAPARTE.PARCEIRO)
+                                .cpfCnpjContraparte("12345678912")
+                                .nomeContraparte("JOÃO DE SOUSA")
+                                .percentualContraparte("00520")
+                                .build()
+                ))
                 .build();
-        //0045|002|3|12345678912|JOÃO DE SOUSA|00520
-        CadastroTerceiro cadastroTerceiros = CadastroTerceiro.builder()
-                .codigoImovel("002")
-                .tipoContraparte(TIPO_CONTRAPARTE.PARCEIRO)
-                .cpfCnpjContraparte("12345678912")
-                .nomeContraparte("JOÃO DE SOUSA")
-                .percentualContraparte("00520")
-                .build();
+
         //0050|001|BR|999|Banco LCDPR|1234|0000000123456789
         ContaBancaria contaBancaria = ContaBancaria.builder()
                 .codigoConta("001")
@@ -92,7 +96,6 @@ public abstract class DummyData {
                 .dadosCadastraisContribuinte(contribuinte)
                 .build()
                 .addImovelRural(imovelRural)
-                .addCadastroTerceiro(cadastroTerceiros)
                 .addContaBancaria(contaBancaria);
     }
 

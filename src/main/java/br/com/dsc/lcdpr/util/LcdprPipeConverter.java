@@ -7,6 +7,8 @@ package br.com.dsc.lcdpr.util;
 
 import br.com.dev.engine.date.Datas;
 import br.com.dsc.lcdpr.annotations.Validation;
+import br.com.dsc.lcdpr.components.CadastroTerceiro;
+import br.com.dsc.lcdpr.components.ImovelRural;
 import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 
 import java.lang.reflect.Field;
@@ -66,7 +68,11 @@ public abstract class LcdprPipeConverter {
             String rst = "";
             if (object.getClass().getSuperclass() == AbstractList.class) {
                 for (Object item : ((List) object)) {
-                    rst += String.valueOf(item.getClass().getMethod(methodName).invoke(item));
+                    if (item instanceof ImovelRural) {
+                        rst += splitImoveisRuraisTerceiros(item);
+                    } else {
+                        rst += String.valueOf(item.getClass().getMethod(methodName).invoke(item));
+                    }
                 }
             } else {
                 rst = String.valueOf(object.getClass().getMethod(methodName).invoke(object));
@@ -77,11 +83,31 @@ public abstract class LcdprPipeConverter {
         return LcdprPipeConverter.convertToLcdprPattern(object);
     }
 
+    private static String splitImoveisRuraisTerceiros(Object object) {
+        String result = "";
+        ImovelRural imovelRural = (ImovelRural) object;
+        List<CadastroTerceiro> cadastroTerceiros = imovelRural.getCadastroTerceiros();
+        imovelRural.setCadastroTerceiros(null);
+        result = generatePipeText(imovelRural).replace("|CRLF", "CRLF");
+        for (CadastroTerceiro cadastroTerceiro : cadastroTerceiros) {
+            result += generatePipeText(cadastroTerceiro);
+        }
+        return result;
+    }
+
     public static String generatePipeText(Object object) {
         String result = getFields(filterSubClasses(object)).stream()
                 .map(f -> executeMethodRecursively(getFieldValue(object, f), "generatePipeText"))
                 .reduce("", String::concat);
-        return result.length() > 0 ? result.substring(0, result.length() - 1).concat("\n") : result;
+        return concatLcdprSufix(result);
+    }
+
+    private static String concatLcdprSufix(String line) {
+        if (line.length() > 0) {
+            line = line.lastIndexOf("|") == (line.length() - 1) ? line.substring(0, line.length() - 1) : line;
+            if (!line.contains("CRLF")) return line.concat("CRLF\n");
+        }
+        return line;
     }
 
     public static Class<?> filterSubClasses(Object object) {

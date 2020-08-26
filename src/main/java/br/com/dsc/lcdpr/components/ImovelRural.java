@@ -5,6 +5,7 @@
  */
 package br.com.dsc.lcdpr.components;
 
+import br.com.dsc.lcdpr.blocos.AberturaIdentificacao;
 import br.com.dsc.lcdpr.enumerated.TIPO_EXPLORACAO;
 import br.com.dsc.lcdpr.interfaces.LcdprHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Registro 0040: Cadastro dos Imóveis Rurais
@@ -37,7 +40,7 @@ import java.io.Serializable;
 @JsonPropertyOrder({
         "registro", "codigoImovel", "pais", "moeda", "cadastroImpostoTerritorialRural",
         "cadastroAtividadeEconomicaPessoaFisica", "inscricaoEstadual", "nomeImovel", "endereco",
-        "numero", "complemento", "bairro", "uf", "codigoMunicipio", "cep", "tipoExploracao", "participacao"
+        "numero", "complemento", "bairro", "uf", "codigoMunicipio", "cep", "tipoExploracao", "participacao", "cadastroTerceiros"
 })
 public class ImovelRural implements Serializable, LcdprHandler {
 
@@ -76,6 +79,9 @@ public class ImovelRural implements Serializable, LcdprHandler {
     @JsonProperty("tipo_exploracao")
     private TIPO_EXPLORACAO tipoExploracao = TIPO_EXPLORACAO.IMOVEL_PROPRIO; // t = 1, o = sim
     private String participacao; // t = 4, o = sim
+    @Builder.Default
+    @JsonProperty("exploracao_imoveis_rurais")
+    private List<CadastroTerceiro> cadastroTerceiros = new ArrayList(); //H = 3, 0045, 1:N, f != o = Se 0040.PARTICIPACAO for menor que 100% ou 0040.TIPO_EXPLORACAO diferente de "1"
 
     /**
      * String[] values = {"0040","001","BR","BRL","12345678","12345678901234","12345678901234","Fazenda Tudo Certo","Rodovia BR 999, Km 3000|||Distrito do Meio","DF","5300108","71000000","2","05000"}
