@@ -46,10 +46,10 @@ public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
     private static final long serialVersionUID = 6287575698325024956L;
     @Builder.Default
     @JsonProperty("demonstrativo_livro_caixa")
-    private List<DemoLivroCaixa> demonstrativoLivroCaixa = new ArrayList(); //H = 2, Q100, 1:N, o
+    private List<DemoLivroCaixa> demonstrativoLivroCaixa = new ArrayList<>(1); //H = 2, Q100, 1:N, o
     @Builder.Default
     @JsonProperty("resumo_demonstrativo_livro_caixa")
-    private List<ResumoDemoLivroCaixa> resumoDemonstrativoLivroCaixa = new ArrayList(); //H = 2, Q200, 1:N, o
+    private List<ResumoDemoLivroCaixa> resumoDemonstrativoLivroCaixa = new ArrayList<>(1); //H = 2, Q200, 1:N, o
 
     public DemonstrativoLivroCaixa addDemoLivroCaixa(DemoLivroCaixa demoLivroCaixa) {
         demonstrativoLivroCaixa.add(demoLivroCaixa);
@@ -100,7 +100,7 @@ public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
      * Arrumar bloco resumo para cada mes
      */
     public void startBlockQ200ByMonth() {
-        resumoDemonstrativoLivroCaixa = new ArrayList();
+        resumoDemonstrativoLivroCaixa = new ArrayList<>(1);
         IntStream.range(1, 13).forEachOrdered(i ->
                 resumoDemonstrativoLivroCaixa.add(ResumoDemoLivroCaixa.builder()
                         .mes(WordUtils.lpad(String.valueOf(i), 2, "0") + getOperationsYear())
@@ -165,5 +165,4 @@ public class DemonstrativoLivroCaixa implements Serializable, LcdprHandler {
             resumoDemonstrativoLivroCaixa.set(i, opResumo);
         }
     }
-
 }

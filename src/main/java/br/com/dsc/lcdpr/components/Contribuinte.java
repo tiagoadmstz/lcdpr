@@ -68,7 +68,7 @@ public class Contribuinte implements Serializable, LcdprHandler {
                 .codigoMunicipio(values[6])
                 .cep(values[7])
                 .numeroTelefone(Long.parseLong(values[8]))
-                .email(values[9])
+                .email(values[9].replace("CRLF", ""))
                 .build();
     }
 

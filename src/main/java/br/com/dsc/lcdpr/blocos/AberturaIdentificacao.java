@@ -45,10 +45,10 @@ public class AberturaIdentificacao implements Serializable, LcdprHandler {
     private Contribuinte dadosCadastraisContribuinte; //H = 2, 0030, 1:1, o
     @Builder.Default
     @JsonProperty("imoveis_rurais")
-    private List<ImovelRural> imoveisRurais = new ArrayList(); //H = 2, 0040, 1:N, o
+    private List<ImovelRural> imoveisRurais = new ArrayList<>(1); //H = 2, 0040, 1:N, o
     @Builder.Default
     @JsonProperty("contas_bancarias")
-    private List<ContaBancaria> contasBancarias = new ArrayList(); //H = 2, 0050, 1:N, o
+    private List<ContaBancaria> contasBancarias = new ArrayList<>(1); //H = 2, 0050, 1:N, o
 
     public AberturaIdentificacao addImovelRural(ImovelRural imovelRural) {
         this.imoveisRurais.add(imovelRural);
@@ -81,5 +81,4 @@ public class AberturaIdentificacao implements Serializable, LcdprHandler {
         }
         return this;
     }
-
 }
