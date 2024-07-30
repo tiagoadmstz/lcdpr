@@ -25,3 +25,6 @@ hs_err_pid*
 # layout por configuração
 target
 .idea
+*.iml
+LCDPR_*.json
+LCDPR_*.txt

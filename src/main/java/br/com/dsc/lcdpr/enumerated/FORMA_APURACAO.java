@@ -60,5 +60,4 @@ public enum FORMA_APURACAO {
                 return "Apuração Lucro";
         }
     }
-
 }

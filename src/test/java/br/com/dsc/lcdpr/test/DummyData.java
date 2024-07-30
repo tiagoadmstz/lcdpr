@@ -1,10 +1,16 @@
 package br.com.dsc.lcdpr.test;
 
-import br.com.dev.engine.date.Datas;
 import br.com.dsc.lcdpr.blocos.AberturaIdentificacao;
 import br.com.dsc.lcdpr.blocos.DemonstrativoLivroCaixa;
 import br.com.dsc.lcdpr.blocos.EncerramentoArquivo;
-import br.com.dsc.lcdpr.components.*;
+import br.com.dsc.lcdpr.components.CadastroTerceiro;
+import br.com.dsc.lcdpr.components.ContaBancaria;
+import br.com.dsc.lcdpr.components.Contribuinte;
+import br.com.dsc.lcdpr.components.DemoLivroCaixa;
+import br.com.dsc.lcdpr.components.IdentificacaoPessoaFisica;
+import br.com.dsc.lcdpr.components.ImovelRural;
+import br.com.dsc.lcdpr.components.ParametrosTributacao;
+import br.com.dsc.lcdpr.components.ResumoDemoLivroCaixa;
 import br.com.dsc.lcdpr.enumerated.TIPO_CONTRAPARTE;
 import br.com.dsc.lcdpr.enumerated.TIPO_DOCUMENTO;
 import br.com.dsc.lcdpr.enumerated.TIPO_EXPLORACAO;
@@ -12,7 +18,10 @@ import br.com.dsc.lcdpr.enumerated.TIPO_LANCAMENTO;
 import br.com.dsc.lcdpr.lcdpr.Lcdpr;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
+
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 public abstract class DummyData {
 
@@ -36,10 +45,10 @@ public abstract class DummyData {
     public static AberturaIdentificacao generateBloco0() {
         //0000|LCDPR|0013|11111111191|JOSÉ DA SILVA|0|0||01012019|31122019
         IdentificacaoPessoaFisica identificacaoPessoaFisica = IdentificacaoPessoaFisica.builder()
-                .cpf("11111111191L")
+                .cpf("11111111191")
                 .nome("JOSÉ DA SILVA")
-                .dataInicioPeriodo(Datas.stringToLocalDate("01/01/2019"))
-                .dataFinalPeriodo(Datas.stringToLocalDate("01/01/2019"))
+                .dataInicioPeriodo(LocalDate.parse("01/01/2019", ofPattern("dd/MM/yyyy")))
+                .dataFinalPeriodo(LocalDate.parse("01/01/2019", ofPattern("dd/MM/yyyy")))
                 .build();
         //0010|1
         ParametrosTributacao parametrosTributacao = ParametrosTributacao.builder().build();
@@ -96,13 +105,14 @@ public abstract class DummyData {
                 .dadosCadastraisContribuinte(contribuinte)
                 .build()
                 .addImovelRural(imovelRural)
+                .addImovelRural(imovelRural)
                 .addContaBancaria(contaBancaria);
     }
 
     public static DemonstrativoLivroCaixa generateBlocoQ() {
         //Q100|02012019|001|001|2|3|Venda de 100 sacas de milho|12345678912|1|1000000|0|1100000|P
         DemoLivroCaixa livroCaixa = DemoLivroCaixa.builder()
-                .data(Datas.stringToLocalDate("02/01/2019"))
+                .data(LocalDate.parse("02/01/2019", ofPattern("dd/MM/yyyy")))
                 .codigoImovel("001")
                 .codigoConta("001")
                 .numeroDocumento("2")
@@ -115,7 +125,7 @@ public abstract class DummyData {
                 .build();
         //Q100|02012019|001|001|3|1|Pagamento de sementes e outros insumos|12345678000121|2|0|500000|600000|P
         DemoLivroCaixa livroCaixa2 = DemoLivroCaixa.builder()
-                .data(Datas.stringToLocalDate("02/01/2019"))
+                .data(LocalDate.parse("02/01/2019", ofPattern("dd/MM/yyyy")))
                 .codigoImovel("001")
                 .codigoConta("001")
                 .numeroDocumento("3")
@@ -153,7 +163,7 @@ public abstract class DummyData {
         //9999|JOSE DE SOUZA|12345678912|AL123456O| testeLCDPR@LCDPR.com.br|6133333333|8007
         return EncerramentoArquivo.builder()
                 .nomeContador("JOSE DE SOUZA")
-                .cpfCnpjContador("12345678912L")
+                .cpfCnpjContador("12345678912")
                 .numeroConselhoRegionalContabilidade("AL123456O")
                 .emailContador("testeLCDPR@LCDPR.com.br")
                 .telefoneContador(6133333333L)

@@ -63,7 +63,7 @@ public class EncerramentoArquivo implements Serializable, LcdprHandler {
                 .numeroConselhoRegionalContabilidade(values[3])
                 .emailContador(values[4])
                 .telefoneContador(values[5] != null ? Long.parseLong(values[5]) : null)
-                .quantidadeRegistrosArquivo(values[6] != null ? Integer.parseInt(values[6]) : null)
+                .quantidadeRegistrosArquivo(values[6] != null ? Integer.parseInt(values[6].replace("CRLF", "")) : null)
                 .build()
         ).orElse(null);
     }

@@ -45,7 +45,7 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
     private static final long serialVersionUID = -1849600283483749425L;
     @Builder.Default
     @JsonProperty("reg")
-    @Validation(size = 4, defaultValue = "0000")
+    @Validation(type = 'N', size = 4, defaultValue = "0000")
     private String registro = "0000";
     @Builder.Default
     @JsonProperty("nome_esc")
@@ -53,7 +53,7 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
     private String nomeEsc = "LCDPR";
     @Builder.Default
     @JsonProperty("cod_ver")
-    @Validation(size = 4, defaultValue = "0013")
+    @Validation(type = 'N', size = 4, defaultValue = "0013")
     private String codigoVersao = "0013";
     @Validation(type = 'N', size = 11)
     private String cpf;
@@ -100,8 +100,7 @@ public class IdentificacaoPessoaFisica implements Serializable, LcdprHandler {
                 .situacaoEspecial(SITUACAO_ESPECIAL.getEnum(values[6]))
                 .dataSituacaoEspecial(!"".equals(values[7]) ? LocalDate.parse(values[7], formatter) : null)
                 .dataInicioPeriodo(LocalDate.parse(values[8], formatter))
-                .dataFinalPeriodo(LocalDate.parse(values[9], formatter))
+                .dataFinalPeriodo(LocalDate.parse(values[9].replace("CRLF", ""), formatter))
                 .build();
     }
-
 }

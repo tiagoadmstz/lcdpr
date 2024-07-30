@@ -26,5 +26,4 @@ public interface LcdprHandler {
     default boolean validate() {
         return LcdprPipeConverter.validateByAnnotation(this);
     }
-
 }

@@ -70,5 +70,4 @@ public class CadastroTerceiro implements Serializable, LcdprHandler {
                 .percentualContraparte(values[5])
                 .build();
     }
-
 }

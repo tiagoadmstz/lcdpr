@@ -65,7 +65,7 @@ public class ContaBancaria implements Serializable, LcdprHandler {
                 .banco(values[3])
                 .nomeBanco(values[4])
                 .agencia(values[5])
-                .numeroConta(values[6])
+                .numeroConta(values[6].replace("CRLF", ""))
                 .build();
     }
 

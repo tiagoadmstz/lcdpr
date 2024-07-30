@@ -81,7 +81,7 @@ public class ImovelRural implements Serializable, LcdprHandler {
     private String participacao; // t = 4, o = sim
     @Builder.Default
     @JsonProperty("exploracao_imoveis_rurais")
-    private List<CadastroTerceiro> cadastroTerceiros = new ArrayList(); //H = 3, 0045, 1:N, f != o = Se 0040.PARTICIPACAO for menor que 100% ou 0040.TIPO_EXPLORACAO diferente de "1"
+    private List<CadastroTerceiro> cadastroTerceiros = new ArrayList<>(1); //H = 3, 0045, 1:N, f != o = Se 0040.PARTICIPACAO for menor que 100% ou 0040.TIPO_EXPLORACAO diferente de "1"
 
     /**
      * String[] values = {"0040","001","BR","BRL","12345678","12345678901234","12345678901234","Fazenda Tudo Certo","Rodovia BR 999, Km 3000|||Distrito do Meio","DF","5300108","71000000","2","05000"}
@@ -106,8 +106,7 @@ public class ImovelRural implements Serializable, LcdprHandler {
                 .codigoMunicipio(values[13])
                 .cep(values[14])
                 .tipoExploracao(TIPO_EXPLORACAO.getEnum(Integer.parseInt(values[15])))
-                .participacao(values[16])
+                .participacao(values[16].replace("CRLF", ""))
                 .build();
     }
-
 }

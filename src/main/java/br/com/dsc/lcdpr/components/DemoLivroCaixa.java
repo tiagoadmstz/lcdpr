@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.dsc.lcdpr.components;
 
-import br.com.dev.engine.date.Datas;
 import br.com.dsc.lcdpr.deserializers.BigDecimalDeserializer;
 import br.com.dsc.lcdpr.deserializers.LocalDateDeserializer;
 import br.com.dsc.lcdpr.enumerated.NATUREZA_SALDO_FINAL;
@@ -21,7 +15,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -30,6 +29,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 /**
  * Registro Q100: Demonstrativo do Resultado da Atividade Rural
@@ -97,7 +98,7 @@ public class DemoLivroCaixa implements Serializable, LcdprHandler {
     private NATUREZA_SALDO_FINAL naturezaSaldoFinal = NATUREZA_SALDO_FINAL.POSITIVO;
 
     public static DemoLivroCaixa buildFromArray(String[] values) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        DateTimeFormatter formatter = ofPattern("ddMMyyyy");
         return DemoLivroCaixa.builder()
                 .data(LocalDate.parse(values[1], formatter))
                 .codigoImovel(values[2])
@@ -120,7 +121,7 @@ public class DemoLivroCaixa implements Serializable, LcdprHandler {
 
     public String entryDescription() {
         return String.format("%s - %s, Valor %s: R$ %.2f",
-                Datas.getDateString(data),
+                data.format(ofPattern("ddMMyyyy")),
                 historico,
                 valorEntrada != null && valorSaida == null ? "entrada" : "saída",
                 valorEntrada != null && valorSaida == null ? valorEntrada : valorSaida);

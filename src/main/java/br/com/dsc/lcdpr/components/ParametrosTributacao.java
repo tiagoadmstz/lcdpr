@@ -47,8 +47,7 @@ public class ParametrosTributacao implements Serializable, LcdprHandler {
      */
     public static ParametrosTributacao buildFromArray(String[] values) {
         return ParametrosTributacao.builder()
-                .formaApuracao(FORMA_APURACAO.getEnum(values[1]))
+                .formaApuracao(FORMA_APURACAO.getEnum(values[1].replace("CRLF", "")))
                 .build();
     }
-
 }

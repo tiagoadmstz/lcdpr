@@ -66,15 +66,14 @@ public class Lcdpr implements Serializable, LcdprHandler {
     }
 
     public void validateBlockQ() {
-        List exceptions = blocoQ.getDemonstrativoLivroCaixa().stream()
+        final List<String> exceptions = blocoQ.getDemonstrativoLivroCaixa().stream()
                 .map(dlc -> dlc.validate(
                         bloco0.getIdentificacaoPessoaFisica().getDataInicioPeriodo(),
                         bloco0.getIdentificacaoPessoaFisica().getDataFinalPeriodo())
-                ).reduce(new ArrayList(), (list, list2) -> {
+                ).reduce(new ArrayList<>(1), (list, list2) -> {
                     list.addAll(list2);
                     return list;
                 });
         if (!exceptions.isEmpty()) throw new ServiceException(exceptions);
     }
-
 }
