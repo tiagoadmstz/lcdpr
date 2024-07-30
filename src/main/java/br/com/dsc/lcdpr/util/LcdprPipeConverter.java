@@ -12,8 +12,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -85,11 +87,11 @@ public abstract class LcdprPipeConverter {
 
     private static String splitImoveisRuraisTerceiros(final Object object) {
         final ImovelRural imovelRural = (ImovelRural) object;
-        final List<CadastroTerceiro> cadastroTerceiros = imovelRural.getCadastroTerceiros();
+        final Optional<List<CadastroTerceiro>> cadastroTerceiros = Optional.ofNullable(imovelRural.getCadastroTerceiros());
         imovelRural.setCadastroTerceiros(null);
         final StringJoiner result = new StringJoiner("\r\n");
         result.add(generatePipeText(imovelRural).replace("|\r\n", ""));
-        for (final CadastroTerceiro cadastroTerceiro : cadastroTerceiros) {
+        for (final CadastroTerceiro cadastroTerceiro : cadastroTerceiros.orElse(Collections.emptyList())) {
             result.add(generatePipeText(cadastroTerceiro));
         }
         return result.toString();
