@@ -2,7 +2,7 @@ name: Maven Deploy
 
 on:
   release:
-    types: [unpublished]
+    types: [edited]
 
 jobs:
   build:
