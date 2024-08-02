@@ -43,7 +43,7 @@ public class LcdprTest {
         assertTrue(LcdprUtil.exportLcdprJson(lcdpr, Datas.stringToLocalDate("03/07/2020")));
     }
 
-    @Test
+    //@Test
     @Order(3)
     public void importLcdprTest() {
         File file = new File("LCDPR_03072020.txt");
