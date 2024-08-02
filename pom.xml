@@ -73,26 +73,16 @@
     <developers>
         <developer>
             <id>tiagoadmstz</id>
-            <name>Tiago D.</name>
+            <name>Tiago D. Teixeira</name>
             <email>tiagoadmstz@yahoo.com.br</email>
         </developer>
     </developers>
 
-    <scm>
-        <connection>scm:git:git://github.com/tiagoadmstz/LCDPR.git</connection>
-        <developerConnection>scm:git:ssh://github.com/tiagoadmstz/LCDPR.git</developerConnection>
-        <url>https://github.com/tiagoadmstz/LCDPR</url>
-    </scm>
-
     <distributionManagement>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/tiagoadmstz</url>
         </repository>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <build>
@@ -113,5 +103,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
