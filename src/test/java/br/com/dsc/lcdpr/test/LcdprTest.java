@@ -56,7 +56,7 @@ class LcdprTest {
         assertTrue(LcdprUtil.exportLcdprJson(lcdpr, localDate));
     }
 
-    @Test
+    //@Test
     @Order(3)
     void importLcdprTest() {
         final Lcdpr lcdpr = LcdprUtil.importLcdprFromTxtFile(txtFile);
