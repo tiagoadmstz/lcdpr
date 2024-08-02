@@ -25,4 +25,4 @@ jobs:
       - name: Build and deploy with Maven
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn clean deploy -Dusername=${{ github.actor }} -Dpassword=${{ secrets.GITHUB_TOKEN }} -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/OWNER/REPOSITORY
+        run: mvn clean deploy -Dusername=${{ github.actor }} -Dpassword=${{ secrets.GITHUB_TOKEN }} -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/tiagoadmstz/LCDPR
