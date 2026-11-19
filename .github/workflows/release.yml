@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    name: Publicar ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Configurar Java
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: |
+            8
+            11
+            17
+            25
+          cache: maven
+          server-id: github
+
+      - name: Validar tag e versão
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]]; then
+            echo "Tag inválida: $GITHUB_REF_NAME (esperado vX.Y.Z ou vX.Y.Z-rc.N)"
+            exit 1
+          fi
+          REVISION="$(./mvnw -q -B help:evaluate -Dexpression=revision -DforceStdout)"
+          BASE="${VERSION%%-rc.*}"
+          if [ "$REVISION" != "$BASE-SNAPSHOT" ]; then
+            echo "Propriedade revision ($REVISION) deve ser $BASE-SNAPSHOT"
+            exit 1
+          fi
+          if [[ "$VERSION" != *-rc.* ]] && ! grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "CHANGELOG.md não tem a seção ## [$VERSION]"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Verificar antes de publicar
+        run: ./mvnw -B -ntp verify -Drevision=$VERSION
+
+      - name: Publicar no GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./mvnw -B -ntp deploy -DskipTests -Drevision=$VERSION -Drelease -Dproject.build.outputTimestamp="$(git log -1 --format=%cI)"
+
+      - name: Criar GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="$RUNNER_TEMP/notes.md"
+          if [[ "$VERSION" == *-rc.* ]]; then
+            echo "Pré-lançamento $VERSION para testes. Ver CHANGELOG.md para o conteúdo da versão final." > "$NOTES"
+            PRERELEASE="--prerelease"
+          else
+            awk -v v="$VERSION" 'index($0, "## [" v "]") == 1 { f = 1; next } /^## / { if (f) exit } f' CHANGELOG.md > "$NOTES"
+            PRERELEASE=""
+          fi
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file "$NOTES" \
+            $PRERELEASE \
+            lcdpr-core/target/lcdpr-core-$VERSION.jar \
+            lcdpr-java11/target/lcdpr-java11-$VERSION.jar \
+            lcdpr-java8/target/lcdpr-java8-$VERSION.jar

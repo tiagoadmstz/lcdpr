@@ -23,7 +23,7 @@ Abrir uma pergunta antes de decidir quando houver trade-off de **regra
 fiscal**: interpretação do manual da RFB, obrigatoriedade condicional,
 cálculo de saldo, arredondamento, encoding ou formato aceito pelo programa
 de entrega, ou versão do leiaute. O agente descreve as opções e o impacto, e
-espera a resposta. Não supõe a regra. A fonte é o manual em `_arquivos/`
+espera a resposta. Não supõe a regra. A fonte é o manual em `docs/leiaute/`
 (skill `leiaute-lcdpr`).
 
 ## Nenhuma ação com risco de dano irreversível ao Git sem aprovação prévia

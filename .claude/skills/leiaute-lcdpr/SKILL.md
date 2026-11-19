@@ -6,8 +6,8 @@ description: Regras do leiaute 1.3 do LCDPR (Livro Caixa Digital do Produtor Rur
 # Leiaute do LCDPR (versão 1.3)
 
 Fonte: Manual de Preenchimento do LCDPR, anexo do Ato Declaratório Executivo
-COPES nº 1/2020, em `_arquivos/manual-de-preenchimento-do-lcdpr-1-3.pdf`
-(planilha do leiaute em `_arquivos/leiaute-1-3-lcdpr.xls`). Em caso de
+COPES nº 1/2020, em `docs/leiaute/manual-de-preenchimento-do-lcdpr-1-3.pdf`
+(planilha do leiaute em `docs/leiaute/leiaute-1-3-lcdpr.xls`). Em caso de
 dúvida, o manual prevalece sobre esta skill e sobre o código.
 Para ler o PDF: `pdftotext -layout <pdf> <saida>` (saída em Latin-1).
 

@@ -1,0 +1,30 @@
+* text=auto eol=lf
+
+*.java text eol=lf
+*.xml text eol=lf
+*.properties text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.hl7 text eol=lf
+*.sh text eol=lf
+mvnw text eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.class binary
+*.jar binary
+*.o binary
+*.a binary
+*.so binary
+*.exe binary
+*.dll binary
+
+target/ export-ignore
+
+src/test/resources/samples/** -text
+**/src/test/resources/samples/** -text
+*.pdf binary
+*.xls binary
