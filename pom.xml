@@ -43,7 +43,7 @@
         <test.jdk.version>${java.version}</test.jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>2026-11-19T00:00:00Z</project.build.outputTimestamp>
-        <revision>2.0.0-SNAPSHOT</revision>
+        <revision>2.0.1-SNAPSHOT</revision>
         <lcdpr.module.name>io.github.tiagoadmstz.lcdpr</lcdpr.module.name>
         <jackson.version>3.3.0</jackson.version>
         <jackson2.version>2.22.4</jackson2.version>
