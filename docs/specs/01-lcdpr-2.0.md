@@ -166,7 +166,7 @@ Quando há linha, a mensagem termina com ` (linha N)`.
 - Linhas separadas por CRLF ou LF; uma linha vazia final é ignorada, e qualquer outra
   linha vazia → `LcdprException`.
 - `split("\\|", -1)`; o primeiro valor é o `REG` (`Registro.fromCodigo`, desconhecido →
-  exceção). Quantidade de valores diferente de `campos().size() + 1` → exceção
+  exceção). Quantidade de valores depois do `REG` diferente de `campos().size()` → exceção
   `"Registro 0040 com 15 campos; esperado 16 (linha 4)"`.
 - A primeira linha tem de ser 0000 (com `NOME_ESC` = `LCDPR`), e a última, 9999.
   0000, 0010, 0030 e 9999 no máximo uma vez. 0045 vai para o último 0040 lido; 0045
