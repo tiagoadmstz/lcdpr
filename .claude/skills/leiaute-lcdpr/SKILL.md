@@ -110,5 +110,7 @@ os repetidos e o próprio 9999. Calcular sempre, nunca pedir ao usuário.
 Os exemplos de preenchimento do manual usam dados fictícios
 (`JOSÉ DA SILVA`, CPF `11111111191`, `Fazenda Tudo Certo`) e servem de amostra
 para os testes. O `README.md` e `src/test/resources` reproduzem esses exemplos.
+Os CPFs dos exemplos do manual (`11111111191`, `12345678912`) têm dígito verificador
+inválido: nas amostras, usar `11144477735`, `12345678909` (CPF) e `11222333000181` (CNPJ).
 Atenção: o exemplo do Q200 no manual tem erros de digitação (`100000,00` no
 texto, `|P` grudado em `Q200`); conferir contra a regra, não contra o texto.

@@ -11,11 +11,10 @@ calcula os saldos do Bloco Q. Publicada no GitHub Packages.
 
 ## Estado atual × alvo
 
-- **Hoje** (`src/`, última release 1.0.2): módulo único em Java 8, pacote
-  `br.com.dsc.lcdpr`, Lombok, modelos mutáveis e bugs conhecidos. É legado:
-  só recebe correção pedida.
-- **Alvo 2.0** ([roadmap](docs/roadmap.md)): três artefatos com a mesma API,
-  no molde do `hl7-handler` (`C:\Users\fastw\DEV\hl7-handler`):
+- **Legado**: até a release 1.0.2, módulo único em Java 8, pacote
+  `br.com.dsc.lcdpr`, com Lombok. O código está no histórico do Git (tag `1.0.2`).
+- **2.0** ([roadmap](docs/roadmap.md), [spec 01](docs/specs/01-lcdpr-2.0.md)):
+  três artefatos com a mesma API, no molde do `hl7-handler` (`C:\Users\fastw\DEV\hl7-handler`):
 
 | Módulo | Java mínimo | Jackson | Sintaxe |
 |---|---|---|---|
@@ -24,7 +23,7 @@ calcula os saldos do Bloco Q. Publicada no GitHub Packages.
 | `lcdpr-java8` | 8 | 2 | sem `var`, `List.of`, `isBlank` etc. |
 
 Pacote e groupId `io.github.tiagoadmstz.lcdpr`, sem Lombok, modelos
-imutáveis, nomes de domínio em português do leiaute (decisões D1–D4 do roadmap).
+imutáveis, nomes de domínio em português do leiaute (decisões D1–D6 do roadmap).
 
 ## Regra principal: módulos independentes
 
