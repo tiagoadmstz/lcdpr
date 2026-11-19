@@ -58,15 +58,94 @@ public final class LcdprValidator {
      * @return lista imutável de erros; vazia quando o registro é válido
      */
     public static List<ErroValidacao> validate(Lcdpr lcdpr) {
+        return validate(lcdpr, false);
+    }
+
+    /**
+     * Valida o registro LCDPR com opção de validação estrita de CAEPF.
+     *
+     * @param lcdpr registro a validar
+     * @param estritoCaepf se true, valida o dígito verificador do CAEPF no registro 0040
+     * @return lista imutável de erros; vazia quando o registro é válido
+     */
+    public static List<ErroValidacao> validate(Lcdpr lcdpr, boolean estritoCaepf) {
         if (lcdpr == null) {
             return List.of(new ErroValidacao(0, null, null, "Arquivo LCDPR ausente"));
         }
         if (lcdpr.bloco0() == null) {
             return List.of(new ErroValidacao(0, null, null, "Bloco 0 obrigatório"));
         }
-        Verificacao verificacao = new Verificacao(lcdpr);
+        Verificacao verificacao = new Verificacao(lcdpr, estritoCaepf);
         verificacao.executar();
         return List.copyOf(verificacao.erros);
+    }
+
+    /**
+     * Valida o dígito verificador de um CAEPF (14 dígitos numéricos, módulo 11).
+     *
+     * @param caepf número do CAEPF com 14 dígitos
+     * @return true se o dígito verificador for válido
+     */
+    public static boolean caepfValido(String caepf) {
+        if (caepf == null || caepf.length() != 14 || !caepf.matches("[0-9]{14}")) {
+            return false;
+        }
+        if (caepf.chars().distinct().count() == 1) {
+            return false;
+        }
+        return cnpjValido(caepf);
+    }
+
+    /**
+     * Verifica se o código do município do IBGE (7 dígitos) é coerente com a UF informada.
+     * Os dois primeiros dígitos do código do município correspondem ao código da UF no IBGE.
+     *
+     * @param codigoMunicipio código do município no IBGE (7 dígitos)
+     * @param uf sigla da Unidade Federativa (2 letras)
+     * @return true se forem coerentes
+     */
+    public static boolean municipioCoerenteComUf(String codigoMunicipio, String uf) {
+        if (codigoMunicipio == null || uf == null || codigoMunicipio.length() < 2) {
+            return false;
+        }
+        String prefixo = prefixoUf(uf);
+        return prefixo != null && codigoMunicipio.startsWith(prefixo);
+    }
+
+    private static String prefixoUf(String uf) {
+        if (uf == null) {
+            return null;
+        }
+        switch (uf.toUpperCase()) {
+            case "RO": return "11";
+            case "AC": return "12";
+            case "AM": return "13";
+            case "RR": return "14";
+            case "PA": return "15";
+            case "AP": return "16";
+            case "TO": return "17";
+            case "MA": return "21";
+            case "PI": return "22";
+            case "CE": return "23";
+            case "RN": return "24";
+            case "PB": return "25";
+            case "PE": return "26";
+            case "AL": return "27";
+            case "SE": return "28";
+            case "BA": return "29";
+            case "MG": return "31";
+            case "ES": return "32";
+            case "RJ": return "33";
+            case "SP": return "35";
+            case "PR": return "41";
+            case "SC": return "42";
+            case "RS": return "43";
+            case "MS": return "50";
+            case "MT": return "51";
+            case "GO": return "52";
+            case "DF": return "53";
+            default: return null;
+        }
     }
 
     private static boolean vazio(String valor) {
@@ -180,6 +259,7 @@ public final class LcdprValidator {
     private static final class Verificacao {
 
         private final Lcdpr lcdpr;
+        private final boolean estritoCaepf;
         private final List<ErroValidacao> erros = new ArrayList<>();
         private final Set<String> codigosImovel = new HashSet<>();
         private final Set<String> codigosConta = new HashSet<>();
@@ -187,8 +267,9 @@ public final class LcdprValidator {
         private LocalDate dataInicial;
         private LocalDate dataFinal;
 
-        Verificacao(Lcdpr lcdpr) {
+        Verificacao(Lcdpr lcdpr, boolean estritoCaepf) {
             this.lcdpr = lcdpr;
+            this.estritoCaepf = estritoCaepf;
         }
 
         void executar() {
@@ -288,6 +369,10 @@ public final class LcdprValidator {
             }
             int linha = proximaLinha++;
             campos(Registro.R0030, linha, () -> RegistroCodec.valores(dados));
+            if (!vazio(dados.codigoMunicipio()) && !vazio(dados.uf())
+                    && !municipioCoerenteComUf(dados.codigoMunicipio(), dados.uf())) {
+                registrar(linha, "0030", "COD_MUN", "0030.COD_MUN incoerente com a UF informada");
+            }
         }
 
         private void verificarImoveis(List<ImovelRural> imoveis) {
@@ -320,9 +405,16 @@ public final class LcdprValidator {
                 exigirPreenchido(linha, "0040", "UF", imovel.uf());
                 exigirPreenchido(linha, "0040", "COD_MUN", imovel.codigoMunicipio());
                 exigirPreenchido(linha, "0040", "CEP", imovel.cep());
+                if (!vazio(imovel.codigoMunicipio()) && !vazio(imovel.uf())
+                        && !municipioCoerenteComUf(imovel.codigoMunicipio(), imovel.uf())) {
+                    registrar(linha, "0040", "COD_MUN", "0040.COD_MUN incoerente com a UF informada");
+                }
                 if (imovel.tipoExploracao() == TipoExploracao.INDIVIDUAL) {
                     exigirPreenchido(linha, "0040", "CAEPF", imovel.caepf());
                 }
+            }
+            if (estritoCaepf && !vazio(imovel.caepf()) && !caepfValido(imovel.caepf())) {
+                registrar(linha, "0040", "CAEPF", "0040.CAEPF com dígito verificador inválido");
             }
             boolean participacaoParcial = participacao != null && participacao.compareTo(CEM) < 0;
             boolean exploracaoCompartilhada = imovel.tipoExploracao() != null

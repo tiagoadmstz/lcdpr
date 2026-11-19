@@ -7,6 +7,11 @@ e este projeto adere a [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [Não Lançado]
 
+### Adicionado
+- Validação de dígito verificador do CAEPF (`LcdprValidator.caepfValido(String)`) e sobrecarga de validação estrita opcional `LcdprValidator.validate(Lcdpr, boolean estritoCaepf)`. O modo padrão (`validate(Lcdpr)`) mantém compatibilidade com exemplos oficiais da RFB com DV sintético.
+- Validação de coerência entre código de município IBGE (7 dígitos) e a UF declarada nos registros 0030 e 0040 (`LcdprValidator.municipioCoerenteComUf(String, String)`).
+- Módulo prático de demonstração `lcdpr-examples` sob o perfil Maven `-Pexamples`, contendo submódulos `example-pure-java` (Java 17+) e `example-pure-java8` (Java 8).
+
 ## [2.0.0] - 2026-11-19
 
 ### Adicionado

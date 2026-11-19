@@ -400,6 +400,69 @@ class LcdprValidatorTest {
                 .contains(new ErroValidacao(13, "9999", "QTD_LIN", "9999.QTD_LIN divergente do calculado: esperado 13"));
     }
 
+    @Test
+    @DisplayName("Validador utilitário de CAEPF confere dígitos válidos e inválidos")
+    void shouldValidateCaepfCheckDigits() {
+        assertThat(LcdprValidator.caepfValido("29311861000172")).isTrue();
+        assertThat(LcdprValidator.caepfValido("29311861000173")).isFalse();
+        assertThat(LcdprValidator.caepfValido("00000000000000")).isFalse();
+        assertThat(LcdprValidator.caepfValido("12345678901234")).isFalse();
+        assertThat(LcdprValidator.caepfValido("123")).isFalse();
+        assertThat(LcdprValidator.caepfValido(null)).isFalse();
+    }
+
+    @Test
+    @DisplayName("Validador de coerência entre código de município IBGE e UF")
+    void shouldValidateMunicipioCoerenteComUf() {
+        assertThat(LcdprValidator.municipioCoerenteComUf("3550308", "SP")).isTrue();
+        assertThat(LcdprValidator.municipioCoerenteComUf("3550308", "sp")).isTrue();
+        assertThat(LcdprValidator.municipioCoerenteComUf("3550308", "RJ")).isFalse();
+        assertThat(LcdprValidator.municipioCoerenteComUf("5300108", "DF")).isTrue();
+        assertThat(LcdprValidator.municipioCoerenteComUf("5300108", "GO")).isFalse();
+        assertThat(LcdprValidator.municipioCoerenteComUf("12345", null)).isFalse();
+        assertThat(LcdprValidator.municipioCoerenteComUf(null, "SP")).isFalse();
+        assertThat(LcdprValidator.municipioCoerenteComUf("3", "SP")).isFalse();
+    }
+
+    @Test
+    @DisplayName("Município no 0030 incoerente com a UF gera erro de validação")
+    void shouldReportIncoherentMunicipioIn0030() {
+        DadosCadastrais dadosIncoerentes = dadosValidos().toBuilder()
+                .uf("SP")
+                .codigoMunicipio("5300108")
+                .build();
+        Lcdpr lcdpr = comDados(dadosIncoerentes);
+
+        assertThat(LcdprValidator.validate(lcdpr))
+                .contains(new ErroValidacao(3, "0030", "COD_MUN", "0030.COD_MUN incoerente com a UF informada"));
+    }
+
+    @Test
+    @DisplayName("Município no 0040 incoerente com a UF gera erro de validação")
+    void shouldReportIncoherentMunicipioIn0040() {
+        ImovelRural imovelIncoerente = imovel(1).toBuilder()
+                .uf("MG")
+                .codigoMunicipio("3550308")
+                .build();
+        Lcdpr lcdpr = comImoveis(List.of(imovel(0), imovelIncoerente));
+
+        assertThat(LcdprValidator.validate(lcdpr))
+                .contains(new ErroValidacao(6, "0040", "COD_MUN", "0040.COD_MUN incoerente com a UF informada"));
+    }
+
+    @Test
+    @DisplayName("Validação estrita de CAEPF gera erro quando dígito verificador é inválido")
+    void shouldReportInvalidCaepfWhenStrictValidationIsTrue() {
+        Lcdpr amostra = Amostras.valido();
+
+        assertThat(LcdprValidator.validate(amostra, false)).isEmpty();
+        assertThat(LcdprValidator.validate(amostra, true))
+                .contains(
+                        new ErroValidacao(4, "0040", "CAEPF", "0040.CAEPF com dígito verificador inválido"),
+                        new ErroValidacao(6, "0040", "CAEPF", "0040.CAEPF com dígito verificador inválido")
+                );
+    }
+
     private static Lcdpr comBloco0(AberturaIdentificacao bloco0) {
         return Amostras.valido().toBuilder().bloco0(bloco0).build();
     }
