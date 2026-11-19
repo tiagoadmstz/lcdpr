@@ -39,7 +39,7 @@ import io.github.tiagoadmstz.lcdpr.tabela.TipoLancamento;
  */
 final class RegistroCodec {
 
-    private static final String NOME_ESC = "LCDPR";
+    static final String NOME_ESC = "LCDPR";
 
     private RegistroCodec() {
     }
@@ -140,13 +140,24 @@ final class RegistroCodec {
 
     static List<String> valores(EncerramentoArquivo encerramento, long quantidadeLinhas) {
         EncerramentoArquivo bloco9 = encerramento != null ? encerramento : EncerramentoArquivo.builder().build();
+        return valoresEncerramento(bloco9, String.valueOf(quantidadeLinhas));
+    }
+
+    static List<String> valoresModelo(EncerramentoArquivo encerramento) {
+        String quantidadeLinhas = encerramento.quantidadeLinhas() == null
+                ? ""
+                : encerramento.quantidadeLinhas().toString();
+        return valoresEncerramento(encerramento, quantidadeLinhas);
+    }
+
+    private static List<String> valoresEncerramento(EncerramentoArquivo bloco9, String quantidadeLinhas) {
         return List.of(
                 texto(bloco9.nomeContador()),
                 texto(bloco9.cpfCnpjContador()),
                 texto(bloco9.crcContador()),
                 texto(bloco9.emailContador()),
                 texto(bloco9.telefoneContador()),
-                String.valueOf(quantidadeLinhas));
+                quantidadeLinhas);
     }
 
     static IdentificacaoPessoaFisica identificacao(List<String> valores) {
