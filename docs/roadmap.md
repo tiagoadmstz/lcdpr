@@ -1,4 +1,4 @@
-# Roadmap: lcdpr 3.0
+# Roadmap: lcdpr 2.0
 
 Estado da biblioteca em 2026-11-19 e plano para a versão multi-JDK, no
 mesmo formato do `hl7-handler`.
@@ -11,6 +11,8 @@ mesmo formato do `hl7-handler`.
 | D2 | Sem Lombok. Modelos imutáveis com builder escrito à mão: `record` no core e classe `final` no java11 e no java8. | 2026-11-19 |
 | D3 | Nomes de domínio em português, seguindo o leiaute da RFB, em CamelCase (`TipoDocumento`, não `TIPO_DOCUMENTO`). Métodos técnicos em inglês (`read`, `write`, `validate`). | 2026-11-19 |
 | D4 | Três artefatos com a mesma API: `lcdpr-core` (Java 17, Jackson 3), `lcdpr-java11` e `lcdpr-java8` (Jackson 2). Mesmas regras de independência do `hl7-handler`. | 2026-11-19 |
+| D5 | Semantic versioning: a última release é a 1.0.2 (a 2.0.0 do pom nunca foi tagueada), então a quebra de API sai como **2.0.0**. | 2026-11-19 |
+| D6 | Branch principal renomeado de `master` para `main`. | 2026-11-19 |
 
 ## Perguntas em aberto
 
@@ -19,8 +21,6 @@ mesmo formato do `hl7-handler`.
 | P1 | O Q200 lista só os meses com lançamento ou sempre os 12 meses do período? Hoje o código gera os 12, inclusive os zerados. | Cálculo do Q200 e `QTD_LIN` |
 | P2 | Que encoding o programa da RFB aceita no arquivo: UTF-8 ou ISO-8859-1? Hoje é UTF-8, e a fonte é o tutorial de entrega em `_arquivos/`. | Writer e reader |
 | P3 | O leiaute 1.3 (Ato Declaratório Executivo COPES nº 1/2020) continua vigente, ou saiu versão nova? | `COD_VER` e regras |
-| P4 | O `pom.xml` diz 2.0.0, mas só existem as tags 1.0.0 e 1.0.2. A próxima versão sai como 2.0.0 ou como 3.0.0? Por ora, `3.0.0-SNAPSHOT` (só a propriedade `revision` muda). | Número da release |
-| P5 | O branch principal passa de `master` para `main`, como no `hl7-handler` e no Eirion? Por ora, fica `master`. | CI e skills |
 
 ## Diagnóstico
 
@@ -63,7 +63,7 @@ Saída real de `mvn test` em 2026-11-19, com o `DummyData` atual:
 
 ### Evoluções inacabadas
 
-| Item | Onde | Destino na 3.0 |
+| Item | Onde | Destino na 2.0 |
 |---|---|---|
 | Validação guiada por leiaute (`config/layout_v13.json` + `@Validation`) | commit `c6854f2` (2020) | Vira descritor de leiaute em código, usado por writer, reader e validador (F2/F4). O JSON sai. |
 | Importação do 0045 | `AberturaIdentificacao:76` comentado | Reader por `REG`, com hierarquia 0040 → 0045 (F3) |
@@ -84,7 +84,7 @@ Saída real de `mvn test` em 2026-11-19, com o `DummyData` atual:
 - Comentários `//t = 4, o = sim` que repetem o manual: o leiaute vira código.
 - `LCDPR.iml` versionado; `config/` sai junto com o JSON de leiaute.
 - Branches remotos: `dev`, `json-age` e `release-2.0.0` já estão no
-  `master`. `release-1.0.0` e `release-1.0.2` têm versões dos mesmos commits
+  `main`. `release-1.0.0` e `release-1.0.2` têm versões dos mesmos commits
   de workflow. Os PRs #33 e #34 (Dependabot) ficam obsoletos com a reescrita.
   Apagar só com aprovação (guard-rails).
 - README com JSON de exemplo divergente do código e texto com espaços quebrados.
@@ -98,13 +98,13 @@ portadas na F6.
 | Fase | Entrega | Depende de |
 |---|---|---|
 | F0 | Contexto de IA (`CLAUDE.md`, `AGENTS.md`, `.claude/`) e este roadmap | — |
-| F1 | Estrutura multi-módulo: pom pai com `${revision}`, `mvnw`, toolchains, Checkstyle, flatten, enforcer, `ci.yml` (JDK 8/11/17/25), `release.yml` por tag, `.editorconfig`, `.gitattributes`, Dependabot. Remove `src/` antigo, `config/`, `LCDPR.iml`. Move `_arquivos/` para `docs/leiaute/`. | F0, P4, P5 |
+| F1 | Estrutura multi-módulo: pom pai com `${revision}`, `mvnw`, toolchains, Checkstyle, flatten, enforcer, `ci.yml` (JDK 8/11/17/25), `release.yml` por tag, `.editorconfig`, `.gitattributes`, Dependabot. Remove `src/` antigo, `config/`, `LCDPR.iml`. Move `_arquivos/` para `docs/leiaute/`. | F0 |
 | F2 | Modelo no core: records por registro, enums das tabelas internas com `fromCodigo` estrito, descritor de leiaute por campo (tipo N/C, tamanho, decimais, obrigatoriedade) | F1, P3 |
 | F3 | `LcdprWriter` (pipe, CRLF, formatos do manual, 0045 após cada 0040, `QTD_LIN` calculado, sem mutar o modelo), `LcdprReader` (por `REG`, campos vazios, erro com número da linha) e JSON com as chaves do manual | F2, P2 |
 | F4 | Validação que devolve a lista de erros: obrigatórios, tamanhos, tipos, condicionais (CAEPF, 0045 se participação < 100% ou tipo ≠ 1, `CAD_ITR`/`BANCO` se país BR), referências de `COD_IMOVEL`/`COD_CONTA` (aceitando `000` e `999`), datas dentro do período, entrada e saída exclusivas, DV de CPF/CNPJ | F3 |
 | F5 | Cálculo do saldo do Q100 e do Q200 cumulativo, com a natureza do saldo | F3, P1 |
 | F6 | Porte para `lcdpr-java11` e `lcdpr-java8`, com os mesmos testes e checagem de API idêntica | F2–F5 |
-| F7 | README, CHANGELOG, CONTRIBUTING, SECURITY, templates do GitHub, guia de migração 2.x → 3.0 e release | F6 |
+| F7 | README, CHANGELOG, CONTRIBUTING, SECURITY, templates do GitHub, guia de migração 1.x → 2.0 e release | F6 |
 
 Testes de referência: os exemplos de preenchimento do manual (seção 3.5)
 viram amostras em `src/test/resources/samples/`, com ida e volta

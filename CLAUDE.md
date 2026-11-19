@@ -11,10 +11,10 @@ calcula os saldos do Bloco Q. Publicada no GitHub Packages.
 
 ## Estado atual × alvo
 
-- **Hoje** (`src/`, versão 2.0.0 no pom): módulo único em Java 8, pacote
+- **Hoje** (`src/`, última release 1.0.2): módulo único em Java 8, pacote
   `br.com.dsc.lcdpr`, Lombok, modelos mutáveis e bugs conhecidos. É legado:
   só recebe correção pedida.
-- **Alvo 3.0** ([roadmap](docs/roadmap.md)): três artefatos com a mesma API,
+- **Alvo 2.0** ([roadmap](docs/roadmap.md)): três artefatos com a mesma API,
   no molde do `hl7-handler` (`C:\Users\fastw\DEV\hl7-handler`):
 
 | Módulo | Java mínimo | Jackson | Sintaxe |
@@ -53,7 +53,7 @@ imutáveis, nomes de domínio em português do leiaute (decisões D1–D4 do roa
   aberto): [`.claude/context/guard-rails-agente.md`](.claude/context/guard-rails-agente.md).
 - Valem as skills globais `code-style`, `git-workflow` e `plan-before-execute`,
   estendidas pelas do projeto. **Não** valem convenções do AGHU.
-- Branch principal: **`master`**, com o fluxo da skill global `git-workflow`.
+- Branch principal: **`main`**, com o fluxo da skill global `git-workflow`.
   Commit e PR só quando pedido.
 
 ### Skills do projeto (`.claude/skills/`)

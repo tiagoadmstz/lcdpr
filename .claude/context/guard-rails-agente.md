@@ -72,7 +72,7 @@ Planejar no modelo caro e executar com agentes baratos: skill
 
 ## Fluxo de Git deste repositório
 
-- Branch principal: `master` (pergunta P5 do roadmap: pode virar `main`).
+- Branch principal: `main` (renomeado de `master` em 2026-11-19).
   Todo PR tem o branch principal como base.
 - Commits, branches e PR: skill global `git-workflow` e skill de projeto
   `pull-request`. Em conflito, a skill de projeto prevalece.

@@ -10,4 +10,4 @@ perguntas em aberto.
 
 | Spec | Fase | Status |
 |---|---|---|
-| — | F1 | a escrever |
+| [01](01-lcdpr-2.0.md) | F1–F6 | em execução |
