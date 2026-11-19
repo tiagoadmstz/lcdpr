@@ -21,13 +21,10 @@ import io.github.tiagoadmstz.lcdpr.leiaute.Campo;
 import io.github.tiagoadmstz.lcdpr.leiaute.Registro;
 import io.github.tiagoadmstz.lcdpr.modelo.AberturaIdentificacao;
 import io.github.tiagoadmstz.lcdpr.modelo.ContaBancaria;
-import io.github.tiagoadmstz.lcdpr.modelo.DadosCadastrais;
 import io.github.tiagoadmstz.lcdpr.modelo.DemonstrativoResultado;
 import io.github.tiagoadmstz.lcdpr.modelo.EncerramentoArquivo;
-import io.github.tiagoadmstz.lcdpr.modelo.IdentificacaoPessoaFisica;
 import io.github.tiagoadmstz.lcdpr.modelo.ImovelRural;
 import io.github.tiagoadmstz.lcdpr.modelo.Lancamento;
-import io.github.tiagoadmstz.lcdpr.modelo.ParametrosTributacao;
 import io.github.tiagoadmstz.lcdpr.modelo.ResumoMensal;
 import io.github.tiagoadmstz.lcdpr.modelo.Terceiro;
 
