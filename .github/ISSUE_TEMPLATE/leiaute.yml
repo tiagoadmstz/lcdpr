@@ -1,0 +1,74 @@
+name: Divergência com o leiaute
+description: O código não segue o leiaute 1.3 do manual da RFB (formato, campo, obrigatoriedade, validação ou cálculo)
+title: "[Leiaute] "
+labels: ["leiaute"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cite a seção do manual em `docs/leiaute/`. Se a regra não estiver no manual, diga isso.
+        **Use apenas dados fictícios** no exemplo: nada de CPF, CNPJ, nome ou conta real.
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo de divergência
+      options:
+        - Formato de campo
+        - Obrigatoriedade
+        - Validação
+        - Cálculo de saldo
+        - Ordem ou quantidade de registros
+        - Outro
+    validations:
+      required: true
+  - type: input
+    id: registro
+    attributes:
+      label: Registro
+      placeholder: "0040"
+    validations:
+      required: true
+  - type: input
+    id: campo
+    attributes:
+      label: Campo
+      placeholder: "PARTICIPACAO"
+  - type: input
+    id: secao
+    attributes:
+      label: Seção do manual
+      description: Manual de preenchimento 1.3, número da seção e página, se souber.
+      placeholder: "Seção 3.x, página N"
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que o manual diz e resultado esperado
+      description: Citação curta do manual e o que a biblioteca deveria fazer.
+    validations:
+      required: true
+  - type: textarea
+    id: obtido
+    attributes:
+      label: Resultado obtido da biblioteca
+    validations:
+      required: true
+  - type: textarea
+    id: exemplo
+    attributes:
+      label: Exemplo fictício
+      description: Linha ou trecho do arquivo, ou o código que reproduz a divergência.
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: artefato
+    attributes:
+      label: Artefato
+      options:
+        - lcdpr-core (Java 17+)
+        - lcdpr-java11 (Java 11 a 16)
+        - lcdpr-java8 (Java 8)
+    validations:
+      required: true

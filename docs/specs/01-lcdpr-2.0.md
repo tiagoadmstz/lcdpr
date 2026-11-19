@@ -137,6 +137,7 @@ Campos em ordem (tipo; default do builder entre colchetes). Strings podem ser `n
 | PERCENTUAL | igual a VALOR, com zeros à esquerda até 5 (`50` → `05000`, `5.2` → `00520`); mais de 5 dígitos → `LcdprException` | igual a VALOR |
 | enum | `codigo()` | `fromCodigo`, com `IllegalArgumentException` convertida em `LcdprException` |
 
+Toda mensagem de erro de formato cita `<REG>.<CAMPO>` e, no reader e no writer, a linha.
 Constantes únicas: `SEPARADOR = "|"`, `FIM_DE_LINHA = "\r\n"` e os `DateTimeFormatter`.
 
 ### `LcdprException`
@@ -166,7 +167,7 @@ Quando há linha, a mensagem termina com ` (linha N)`.
 - Linhas separadas por CRLF ou LF; uma linha vazia final é ignorada, e qualquer outra
   linha vazia → `LcdprException`.
 - `split("\\|", -1)`; o primeiro valor é o `REG` (`Registro.fromCodigo`, desconhecido →
-  exceção). Quantidade de valores diferente de `campos().size() + 1` → exceção
+  exceção). Quantidade de valores depois do `REG` diferente de `campos().size()` → exceção
   `"Registro 0040 com 15 campos; esperado 16 (linha 4)"`.
 - A primeira linha tem de ser 0000 (com `NOME_ESC` = `LCDPR`), e a última, 9999.
   0000, 0010, 0030 e 9999 no máximo uma vez. 0045 vai para o último 0040 lido; 0045
@@ -198,7 +199,12 @@ Formato, compatível com o JSON da 1.x (README):
 - `qtd_lin` sai como no modelo (omitido se `null`).
 - Leitura: chaves comparadas sem diferenciar maiúsculas (`cad_ITR` e `CAEPF` da 1.x funcionam);
   chave ausente = texto vazio; aceita string ou número (texto do número); `reg`,
-  `nome_esc` e chaves desconhecidas são ignorados. JSON inválido → `LcdprException`.
+  `nome_esc` e chaves desconhecidas são ignorados. JSON inválido ou com conteúdo depois do
+  objeto raiz → `LcdprException` (nos três módulos).
+- `bloco_0.exploracao_imoveis_rurais` (formato do exemplo do README da 1.x): cada 0045 é
+  anexado ao 0040 de mesmo `cod_imovel` (o primeiro, se houver repetição); sem 0040 com esse
+  código → `LcdprException`. O 1.x gravava os terceiros dentro do imóvel, que é o formato da 2.0.
+- Entrada `null` no reader e no `fromJson` → `LcdprException`. BOM UTF-8 no início é ignorado.
 
 ### `ErroValidacao` e `LcdprValidator`
 
@@ -216,7 +222,8 @@ exceção por conteúdo. Percorre na ordem do writer. Regras:
    NUMERO_EXATO diferente de `tamanho` dígitos; CPF_CNPJ fora de 11 dígitos ou de 14
    posições; VALOR com mais de 19 dígitos. Se o `RegistroCodec` lançar `LcdprException`
    (valor negativo, `|` no texto), essa mensagem vira o erro do registro.
-3. DV: CPF (11) e CNPJ (14, inclusive alfanumérico) em `0000.CPF`, `0045.ID_CONTRAPARTE`,
+3. DV: CPF (11; todos os dígitos iguais é inválido) e CNPJ (14, inclusive alfanumérico;
+   todos os caracteres iguais é inválido) em `0000.CPF`, `0045.ID_CONTRAPARTE`,
    `Q100.ID_PARTIC` e `9999.IDENT_CPF_CNPJ` (quando preenchido) → `"<REG>.<CAMPO> com dígito verificador inválido"`.
 4. 0000: `DT_INI` ≤ `DT_FIN`, no mesmo ano; `SIT_ESPECIAL` = FALECIMENTO exige `DT_SIT_ESP`.
 5. 0040: `PARTICIPACAO` entre 0 e 100. Com `PAIS` = BR, `UF`, `COD_MUN` e `CEP` são
@@ -224,11 +231,14 @@ exceção por conteúdo. Percorre na ordem do writer. Regras:
    `PARTICIPACAO` < 100 ou `TIPO_EXPLORACAO` ≠ INDIVIDUAL → erro no 0040. O 0045 com
    `COD_IMOVEL` diferente do 0040 pai → erro; `PERC_CONTRAPARTE` entre 0 e 100.
 6. 0050: `BANCO` obrigatório com `PAIS_CTA` = BR; `COD_CONTA` repetido → erro.
-7. Q100: `COD_IMOVEL` cadastrado num 0040 ou `000`; `COD_CONTA` cadastrado num 0050, `000`
+7. Q100: lançamentos em ordem de `DATA` (manual, seção 3: a ordem dos registros é
+   sequencial; o saldo é acumulado na ordem do arquivo) → um erro no primeiro fora de ordem;
+   `COD_IMOVEL` cadastrado num 0040 ou `000`; `COD_CONTA` cadastrado num 0050, `000`
    ou `999`; `DATA` dentro de `DT_INI`..`DT_FIN`; `VL_ENTRADA` e `VL_SAIDA` maiores que zero
    no mesmo lançamento → erro.
 8. Q200: `MES` dentro do período.
-9. Saldos: compara Q100 e Q200 com o `LcdprCalculator.recalculate`; divergência de
+9. Saldos: compara Q100 e Q200 com o `LcdprCalculator.recalculate` (cada lançamento com o
+   seu calculado, ligado pela posição na ordenação estável, mesmo fora de ordem); divergência de
    `SLD_FIN`/`NAT_SLD_FIN` → `"Q100.SLD_FIN divergente do calculado: esperado 5000.00 P"`.
    Q200 com quantidade de meses diferente → um erro no bloco Q (linha 0).
 10. 9999: `quantidadeLinhas` não nulo e diferente do calculado → erro.
