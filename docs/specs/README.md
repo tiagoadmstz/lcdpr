@@ -10,4 +10,5 @@ perguntas em aberto.
 
 | Spec | Fase | Status |
 |---|---|---|
-| [01](01-lcdpr-2.0.md) | F1–F6 | em execução |
+| [01](01-lcdpr-2.0.md) | F1–F7 | concluído |
+| [02](02-lcdpr-2.1.md) | 2.1 | em execução |

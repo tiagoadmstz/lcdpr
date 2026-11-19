@@ -177,7 +177,12 @@ Lcdpr lcdpr = Lcdpr.builder()
 ```java
 Lcdpr calculado = LcdprCalculator.recalculate(lcdpr);
 
+// Validação padrão (compatível com dados oficiais do manual da RFB)
 List<ErroValidacao> erros = LcdprValidator.validate(calculado);
+
+// Validação estrita (ativa verificação de dígito verificador do CAEPF)
+List<ErroValidacao> errosEstritos = LcdprValidator.validate(calculado, true);
+
 for (ErroValidacao erro : erros) {
     System.out.println("linha " + erro.linha() + ": " + erro.mensagem());
 }
@@ -190,6 +195,7 @@ if (erros.isEmpty()) {
 - `ErroValidacao` tem `linha()`, `registro()`, `campo()` e `mensagem()`. A linha é a posição que o registro teria no arquivo gerado; `0` indica erro que não é de um registro.
 - O `LcdprWriter` não valida as regras do leiaute (obrigatoriedade, referências entre registros). Ele só recusa valor que não pode ser formatado, como valor negativo ou texto com `|`. Por isso, valide antes de gravar.
 - `LcdprWriter.write(calculado)` devolve o conteúdo como `String`, sem gravar em arquivo.
+- O validador confere o dígito verificador de CPF e CNPJ, a coerência entre a UF e o prefixo do código de município IBGE (0030 e 0040) e, sob demanda, o DV do CAEPF via `LcdprValidator.caepfValido(String)`.
 
 ### Ler e converter para JSON
 
@@ -302,9 +308,11 @@ No JSON, os nomes dos campos são os do manual em minúsculas, e todos os valore
   - 0045 obrigatório quando `PARTICIPACAO` é menor que 100% ou `TIPO_EXPLORACAO` não é individual;
   - `BANCO` obrigatório para conta no Brasil;
   - `COD_IMOVEL` e `COD_CONTA` do Q100 cadastrados, aceitando `000` e `999` quando o manual admite;
+  - coerência entre a UF declarada e os 2 primeiros dígitos do código de município IBGE no 0030 e no 0040;
   - `DATA` do lançamento e `MES` do Q200 dentro do período da escrituração;
   - `VL_ENTRADA` e `VL_SAIDA` não podem ser maiores que zero no mesmo lançamento;
-  - `QTD_LIN` informado, quando existir, igual ao calculado.
+  - `QTD_LIN` informado, quando existir, igual ao calculado;
+  - conferência de DV do CAEPF sob demanda (via `LcdprValidator.validate(lcdpr, true)` ou `caepfValido(String)`).
 - **Cálculo do Q100:** os lançamentos saem em ordem de data. O saldo começa em zero no início do ano e é acumulado (entradas menos saídas). O `SLD_FIN` guarda o valor absoluto, e `NAT_SLD_FIN` é `P` ou `N`.
 - **Cálculo do Q200:** o Q200 cumulativo tem um registro por mês em que há lançamento, em ordem crescente. Cada `SLD_FIN` é o saldo do mês somado ao saldo final do mês anterior.
 
@@ -341,6 +349,18 @@ O build compila com o JDK 25 e roda os testes de cada módulo na JVM do seu Java
 Repita o bloco para as versões 11, 17 e 25.
 
 Os três módulos são independentes, com código e testes próprios. Uma correção precisa ser aplicada nos três.
+
+## Exemplos
+
+O repositório contém o módulo `lcdpr-examples` com projetos de exemplo prontos para execução em código puro:
+- `example-pure-java`: exemplo em Java 17+ usando `lcdpr-core` com records e builders.
+- `example-pure-java8`: exemplo em Java 8 usando `lcdpr-java8`.
+
+Para compilar e testar os exemplos, execute com o perfil `examples`:
+
+```bash
+./mvnw test -Pexamples
+```
 
 ## Documentação
 
