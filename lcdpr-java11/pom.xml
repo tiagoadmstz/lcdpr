@@ -59,6 +59,8 @@
                     <jdkToolchain>
                         <version>${java.version}</version>
                     </jdkToolchain>
+                    <sourcepath>${project.build.sourceDirectory}</sourcepath>
+                    <subpackages>io.github.tiagoadmstz.lcdpr</subpackages>
                 </configuration>
                 <executions>
                     <execution>

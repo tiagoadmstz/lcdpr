@@ -112,7 +112,11 @@ public final class LcdprJson {
         if (bloco9 != null) {
             raiz.set(BLOCO_9, registro(Registro.R9999, RegistroCodec.valoresModelo(bloco9)));
         }
-        return MAPPER.writeValueAsString(raiz);
+        try {
+            return MAPPER.writeValueAsString(raiz);
+        } catch (JacksonException e) {
+            throw new LcdprException("Falha ao gerar o JSON do LCDPR", e);
+        }
     }
 
     /**
