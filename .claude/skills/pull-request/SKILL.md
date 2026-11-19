@@ -5,8 +5,7 @@ description: Como escrever título e descrição de pull request no lcdpr. Usar 
 
 # Pull request — lcdpr
 
-Quando existir `.github/pull_request_template.md` (entra na F7 do roadmap), a
-descrição segue exatamente as seções dele. Até lá, usar as seções abaixo.
+A descrição segue exatamente as seções de `.github/pull_request_template.md`, na mesma ordem.
 
 ## Título
 
@@ -22,13 +21,17 @@ Em **português**, em tópicos curtos, começando direto em `### Descrição`:
 
 ```
 ### Descrição
+### Motivação
 ### Alterações
 ### Validação
 ### Como testar
 ### Observações
 ### Links relacionados
+### Checklist
 ```
 
+- **Motivação:** o problema ou a necessidade, com a fase do roadmap, se houver.
+- **Checklist:** marcar só o que foi feito de fato. O que não se aplica fica sem marca, com a justificativa em **Observações**.
 - **Alterações:** pontos principais agrupados por tema; dizer se a mudança foi
   feita nos três módulos (ou por que não).
 - **Validação:** o que rodou e onde (`./mvnw verify`, JDK 8, 11, 17 e 25; amostra usada).

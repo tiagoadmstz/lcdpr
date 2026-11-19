@@ -1,0 +1,71 @@
+name: Bug
+description: Algo não funciona como esperado
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar. **Não envie arquivo LCDPR real**: troque CPF, CNPJ, nomes, endereços e contas por valores inventados.
+        Para vulnerabilidades de segurança, não abra issue pública; veja o `SECURITY.md`.
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição
+      description: O que aconteceu?
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Comportamento esperado
+    validations:
+      required: true
+  - type: textarea
+    id: reproducao
+    attributes:
+      label: Como reproduzir
+      description: Código mínimo e passos. Se possível, um teste que falha.
+      render: java
+    validations:
+      required: true
+  - type: textarea
+    id: arquivo
+    attributes:
+      label: Trecho do arquivo LCDPR (fictício)
+      description: Só as linhas necessárias para reproduzir, com dados inventados.
+      render: text
+  - type: input
+    id: registro
+    attributes:
+      label: Registro envolvido
+      placeholder: "0040, Q100, 9999..."
+  - type: dropdown
+    id: artefato
+    attributes:
+      label: Artefato
+      options:
+        - lcdpr-core (Java 17+)
+        - lcdpr-java11 (Java 11 a 16)
+        - lcdpr-java8 (Java 8)
+    validations:
+      required: true
+  - type: input
+    id: versao-lib
+    attributes:
+      label: Versão da biblioteca
+      placeholder: "2.0.0"
+    validations:
+      required: true
+  - type: input
+    id: versao-java
+    attributes:
+      label: Versão do Java
+      placeholder: "17.0.17"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Stack trace ou logs
+      render: text

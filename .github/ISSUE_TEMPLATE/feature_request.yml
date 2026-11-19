@@ -1,0 +1,32 @@
+name: Melhoria
+description: Sugira uma funcionalidade ou mudança de comportamento
+title: "[Melhoria] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Problema ou necessidade
+      description: Que situação esta melhoria resolve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposta
+    attributes:
+      label: Proposta
+      description: Como deveria funcionar? Se possível, um exemplo de uso da API.
+    validations:
+      required: true
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas consideradas
+  - type: checkboxes
+    id: artefatos
+    attributes:
+      label: Artefatos afetados
+      description: Por padrão, toda melhoria é feita nos três.
+      options:
+        - label: lcdpr-core (Java 17+)
+        - label: lcdpr-java11 (Java 11 a 16)
+        - label: lcdpr-java8 (Java 8)

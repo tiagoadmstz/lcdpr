@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vulnerabilidade de segurança
+    url: https://github.com/tiagoadmstz/lcdpr/security/advisories/new
+    about: Reporte vulnerabilidades em privado, nunca em issue pública.
+  - name: Manual e leiaute da RFB
+    url: https://github.com/tiagoadmstz/lcdpr/tree/main/docs/leiaute
+    about: Manual de preenchimento 1.3 e tutorial de entrega, em docs/leiaute.
