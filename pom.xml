@@ -244,6 +244,12 @@
 
     <profiles>
         <profile>
+            <id>examples</id>
+            <modules>
+                <module>lcdpr-examples</module>
+            </modules>
+        </profile>
+        <profile>
             <id>release</id>
             <activation>
                 <property>

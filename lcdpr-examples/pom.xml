@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.tiagoadmstz.lcdpr</groupId>
+        <artifactId>lcdpr-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>lcdpr-examples</artifactId>
+    <packaging>pom</packaging>
+
+    <name>LCDPR Examples</name>
+    <description>Demonstration implementations using Pure Java.</description>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <modules>
+        <module>example-pure-java</module>
+        <module>example-pure-java8</module>
+    </modules>
+</project>
