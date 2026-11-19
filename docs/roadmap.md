@@ -83,12 +83,9 @@ Saída real de `mvn test` em 2026-11-19, com o `DummyData` atual:
 - Cabeçalho "To change this license header" do NetBeans em vários arquivos.
 - Comentários `//t = 4, o = sim` que repetem o manual: o leiaute vira código.
 - `LCDPR.iml` versionado; `config/` sai junto com o JSON de leiaute.
-- Branches remotos: `dev`, `json-age` e `release-2.0.0` já estão no
-  `main`. `release-1.0.0` e `release-1.0.2` têm versões dos mesmos commits
-  de workflow. Os PRs #33 e #34 (Dependabot) ficam obsoletos com a reescrita.
-  Apagar só com aprovação (guard-rails).
-- README com JSON de exemplo divergente do código e texto com espaços quebrados.
-- Workflow `maven-publish.yml` só com JDK 8, sem CI de PR.
+- Branches remotos antigos (`dev`, `json-age`, `release-2.0.0`, `master`) e branches de PRs (`feat/core-2.0`, `build/multi-module`, `chore/ai-context`) apagados após merge. PRs #33 e #34 encerrados pelo Dependabot.
+- README com JSON de exemplo divergente do código e texto com espaços quebrados: reescrito na F7.
+- Workflow `maven-publish.yml` só com JDK 8 substituído por `ci.yml` e `release.yml`.
 
 ## Fases
 
@@ -112,7 +109,7 @@ viram amostras em `src/test/resources/samples/`, com ida e volta
 
 ## Próximos passos
 
-- **Publicar a 2.0.0.** Com `main` com o CI verde, criar a tag anotada `v2.0.0` e acompanhar o workflow *Release*. O `revision` do `pom.xml` raiz já é `2.0.0-SNAPSHOT` e o CHANGELOG já tem a seção `## [2.0.0]`. O passo a passo está no `CONTRIBUTING.md`.
+- **Publicar a 2.0.0.** Feito em 2026-11-19 com a tag `v2.0.0` e release no GitHub Packages. Ciclo 2.0.1-SNAPSHOT iniciado.
 - **Responder P1 a P3.** P1: o Q200 sai só com os meses com lançamento, ou com os 12 meses do período? P2: qual encoding o programa da RFB aceita, UTF-8 ou ISO-8859-1? P3: o leiaute 1.3 continua vigente, ou saiu versão nova? Enquanto P1 e P2 estiverem em aberto, o README e o guia de migração descrevem o comportamento atual e apontam o ponto em aberto.
 - **Itens fora da 2.0:**
   - assinatura digital ICP-Brasil: não é escopo da biblioteca;
