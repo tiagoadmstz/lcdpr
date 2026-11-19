@@ -11,9 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -36,7 +38,9 @@ import io.github.tiagoadmstz.lcdpr.modelo.Terceiro;
  */
 public final class LcdprJson {
 
-    private static final JsonMapper MAPPER = JsonMapper.builder().build();
+    private static final JsonMapper MAPPER = JsonMapper.builder()
+            .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+            .build();
     private static final String REG = "reg";
     private static final String BLOCO_0 = "bloco_0";
     private static final String IDENTIFICACAO = "identificacao_pessoa_fisica";
@@ -138,11 +142,17 @@ public final class LcdprJson {
     /**
      * Lê o modelo a partir do JSON. Chaves sem diferenciar maiúsculas; chaves desconhecidas são ignoradas.
      *
+     * Os terceiros do formato da versão 1.x (em bloco_0.exploracao_imoveis_rurais) são anexados ao primeiro
+     * imóvel de mesmo COD_IMOVEL.
+     *
      * @param json texto JSON
      * @return modelo lido
-     * @throws LcdprException se o JSON for inválido ou algum registro estiver fora do leiaute
+     * @throws LcdprException se o JSON for nulo ou inválido, ou algum registro estiver fora do leiaute
      */
     public static Lcdpr fromJson(String json) {
+        if (json == null) {
+            throw new LcdprException("JSON do LCDPR nulo");
+        }
         JsonNode raiz;
         try {
             raiz = MAPPER.readTree(json);
@@ -161,12 +171,30 @@ public final class LcdprJson {
                         objetoObrigatorio(bloco0Json, PARAMETROS), RegistroCodec::parametrosTributacao))
                 .dadosCadastrais(lerObjeto(Registro.R0030,
                         objetoObrigatorio(bloco0Json, DADOS_CADASTRAIS), RegistroCodec::dadosCadastrais));
+        List<ImovelRural> imoveis = new ArrayList<>();
         for (JsonNode imovelJson : elementos(bloco0Json, IMOVEIS)) {
             ImovelRural.Builder imovel = lerObjeto(Registro.R0040, imovelJson, RegistroCodec::imovelRural).toBuilder();
             for (JsonNode terceiroJson : elementos(imovelJson, EXPLORACAO)) {
                 imovel.addTerceiro(lerObjeto(Registro.R0045, terceiroJson, RegistroCodec::terceiro));
             }
-            bloco0.addImovelRural(imovel.build());
+            imoveis.add(imovel.build());
+        }
+        for (JsonNode terceiroJson : elementos(bloco0Json, EXPLORACAO)) {
+            Terceiro terceiro = lerObjeto(Registro.R0045, terceiroJson, RegistroCodec::terceiro);
+            boolean anexado = false;
+            for (int i = 0; i < imoveis.size() && !anexado; i++) {
+                if (Objects.equals(imoveis.get(i).codigoImovel(), terceiro.codigoImovel())) {
+                    imoveis.set(i, imoveis.get(i).toBuilder().addTerceiro(terceiro).build());
+                    anexado = true;
+                }
+            }
+            if (!anexado) {
+                throw new LcdprException("Registro 0045 com COD_IMOVEL " + terceiro.codigoImovel()
+                        + " sem 0040 correspondente");
+            }
+        }
+        for (ImovelRural imovel : imoveis) {
+            bloco0.addImovelRural(imovel);
         }
         for (JsonNode contaJson : elementos(bloco0Json, CONTAS)) {
             bloco0.addContaBancaria(lerObjeto(Registro.R0050, contaJson, RegistroCodec::contaBancaria));
@@ -203,9 +231,12 @@ public final class LcdprJson {
      *
      * @param leitor origem do texto JSON
      * @return modelo lido
-     * @throws LcdprException se o JSON for inválido, o leiaute não for respeitado ou houver falha de E/S
+     * @throws LcdprException se o leitor for nulo, o JSON for inválido ou houver falha de E/S
      */
     public static Lcdpr fromJson(Reader leitor) {
+        if (leitor == null) {
+            throw new LcdprException("Leitor do JSON do LCDPR nulo");
+        }
         StringWriter conteudo = new StringWriter();
         char[] buffer = new char[8192];
         try {
@@ -260,11 +291,7 @@ public final class LcdprJson {
         if (registro == Registro.R0000) {
             valores.set(0, RegistroCodec.NOME_ESC);
         }
-        try {
-            return codec.apply(valores);
-        } catch (LcdprException e) {
-            throw new LcdprException("Registro " + registro.codigo() + ": " + e.getMessage(), e);
-        }
+        return codec.apply(valores);
     }
 
     private static JsonNode objetoOpcional(JsonNode pai, String chave) {

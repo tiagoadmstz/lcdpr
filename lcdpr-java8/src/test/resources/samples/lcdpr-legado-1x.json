@@ -51,7 +51,7 @@
     "exploracao_imoveis_rurais": [
       {
         "reg": "0045",
-        "cod_imovel": "002",
+        "cod_imovel": "001",
         "tipo_contraparte": "3",
         "id_contraparte": "12345678912",
         "nome_contraparte": "JOÃO DE SOUSA",

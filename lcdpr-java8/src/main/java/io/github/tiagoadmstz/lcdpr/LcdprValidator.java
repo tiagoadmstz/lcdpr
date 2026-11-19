@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +44,6 @@ public final class LcdprValidator {
     private static final int DIGITOS_PERCENTUAL = 5;
     private static final int TAMANHO_CPF = 11;
     private static final int MODULO_DV = 11;
-    private static final Comparator<LocalDate> ORDEM_DATA = Comparator.nullsLast(Comparator.naturalOrder());
     private static final int[] PESOS_CPF_PRIMEIRO = {10, 9, 8, 7, 6, 5, 4, 3, 2};
     private static final int[] PESOS_CPF_SEGUNDO = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
     private static final int[] PESOS_CNPJ_PRIMEIRO = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
@@ -135,22 +134,22 @@ public final class LcdprValidator {
     }
 
     private static boolean dvValido(String documento) {
+        if (documento.chars().distinct().count() == 1) {
+            return false;
+        }
         return documento.length() == TAMANHO_CPF ? cpfValido(documento) : cnpjValido(documento);
     }
 
     private static boolean cpfValido(String cpf) {
-        if (cpf.chars().distinct().count() == 1) {
-            return false;
-        }
         int primeiro = digitoVerificador(cpf.substring(0, 9), PESOS_CPF_PRIMEIRO);
         int segundo = digitoVerificador(cpf.substring(0, 10), PESOS_CPF_SEGUNDO);
-        return valorDigito(cpf, 9) == primeiro && valorDigito(cpf, 10) == segundo;
+        return valorCaractere(cpf, 9) == primeiro && valorCaractere(cpf, 10) == segundo;
     }
 
     private static boolean cnpjValido(String cnpj) {
         int primeiro = digitoVerificador(cnpj.substring(0, 12), PESOS_CNPJ_PRIMEIRO);
         int segundo = digitoVerificador(cnpj.substring(0, 13), PESOS_CNPJ_SEGUNDO);
-        return valorDigito(cnpj, 12) == primeiro && valorDigito(cnpj, 13) == segundo;
+        return valorCaractere(cnpj, 12) == primeiro && valorCaractere(cnpj, 13) == segundo;
     }
 
     private static int digitoVerificador(String base, int[] pesos) {
@@ -160,10 +159,6 @@ public final class LcdprValidator {
         }
         int resto = soma % MODULO_DV;
         return resto < 2 ? 0 : MODULO_DV - resto;
-    }
-
-    private static int valorDigito(String documento, int indice) {
-        return valorCaractere(documento, indice);
     }
 
     private static int valorCaractere(String texto, int indice) {
@@ -176,7 +171,7 @@ public final class LcdprValidator {
 
     private static int primeiroForaDeOrdem(List<Lancamento> lancamentos) {
         for (int i = 1; i < lancamentos.size(); i++) {
-            if (ORDEM_DATA.compare(lancamentos.get(i - 1).data(), lancamentos.get(i).data()) > 0) {
+            if (LcdprCalculator.ORDEM_DATA.compare(lancamentos.get(i - 1).data(), lancamentos.get(i).data()) > 0) {
                 return i;
             }
         }
@@ -224,6 +219,9 @@ public final class LcdprValidator {
             List<String> valores;
             try {
                 valores = formatar.get();
+            } catch (RegistroCodec.ErroCampo e) {
+                registrar(linha, registro.codigo(), e.campo(), e.getMessage());
+                return;
             } catch (LcdprException e) {
                 registrar(linha, registro.codigo(), null, e.getMessage());
                 return;
@@ -367,19 +365,36 @@ public final class LcdprValidator {
         }
 
         private void verificarBlocoQ(DemonstrativoResultado blocoQ) {
+            DemonstrativoResultado calculado = LcdprCalculator.recalculate(lcdpr).blocoQ();
             List<Lancamento> lancamentos = blocoQ.lancamentos();
-            List<Lancamento> esperados = LcdprCalculator.recalculate(lcdpr).blocoQ().lancamentos();
+            List<Lancamento> porPosicao = esperadosPorPosicao(lancamentos, calculado.lancamentos());
             int foraDeOrdem = primeiroForaDeOrdem(lancamentos);
             for (int i = 0; i < lancamentos.size(); i++) {
                 int linha = proximaLinha++;
                 verificarLancamento(lancamentos.get(i), linha);
                 if (i == foraDeOrdem) {
                     registrar(linha, "Q100", "DATA", "Q100 fora da ordem de data");
-                } else if (foraDeOrdem < 0) {
-                    verificarSaldoLancamento(lancamentos.get(i), esperados.get(i), linha);
                 }
+                verificarSaldoLancamento(lancamentos.get(i), porPosicao.get(i), linha);
             }
-            verificarResumos(blocoQ.resumosMensais());
+            verificarResumos(blocoQ.resumosMensais(), calculado.resumosMensais());
+        }
+
+        /**
+         * Para cada lançamento original (pela posição no arquivo), o calculado que ocupa a mesma posição
+         * na ordem de data estável. Os calculados já vêm nessa ordem, então o k-ésimo corresponde ao k-ésimo índice.
+         */
+        private static List<Lancamento> esperadosPorPosicao(List<Lancamento> originais, List<Lancamento> calculados) {
+            List<Integer> ordem = new ArrayList<>(originais.size());
+            for (int i = 0; i < originais.size(); i++) {
+                ordem.add(i);
+            }
+            ordem.sort((a, b) -> LcdprCalculator.ORDEM_DATA.compare(originais.get(a).data(), originais.get(b).data()));
+            Lancamento[] esperados = new Lancamento[originais.size()];
+            for (int k = 0; k < ordem.size(); k++) {
+                esperados[ordem.get(k)] = calculados.get(k);
+            }
+            return Arrays.asList(esperados);
         }
 
         private void verificarLancamento(Lancamento lancamento, int linha) {
@@ -424,11 +439,10 @@ public final class LcdprValidator {
             }
         }
 
-        private void verificarResumos(List<ResumoMensal> resumos) {
-            List<ResumoMensal> esperados = LcdprCalculator.recalculate(lcdpr).blocoQ().resumosMensais();
+        private void verificarResumos(List<ResumoMensal> resumos, List<ResumoMensal> esperados) {
             boolean mesmaQuantidade = resumos.size() == esperados.size();
             if (!mesmaQuantidade) {
-                registrar(0, "Q200", null, "Q200 com " + resumos.size() + " meses; esperado " + esperados.size());
+                registrar(0, "Q200", null, "Q200 com " + resumos.size() + " mês(es); esperado " + esperados.size());
             }
             for (int i = 0; i < resumos.size(); i++) {
                 int linha = proximaLinha++;

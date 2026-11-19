@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.io.TempDir;
 import io.github.tiagoadmstz.lcdpr.modelo.AberturaIdentificacao;
 import io.github.tiagoadmstz.lcdpr.modelo.EncerramentoArquivo;
 import io.github.tiagoadmstz.lcdpr.modelo.ImovelRural;
+import io.github.tiagoadmstz.lcdpr.modelo.Lancamento;
 
 class LcdprWriterTest {
 
@@ -88,6 +90,22 @@ class LcdprWriterTest {
 
         assertThatThrownBy(() -> LcdprWriter.write(semBloco0))
                 .isInstanceOf(LcdprException.class);
+    }
+
+    @Test
+    @DisplayName("Informa o registro, o campo e a linha quando o histórico do Q100 tem separador")
+    void shouldNameRecordFieldAndLineInWriteError() {
+        Lcdpr modelo = Amostras.valido();
+        List<Lancamento> lancamentos = new ArrayList<>(modelo.blocoQ().lancamentos());
+        lancamentos.set(0, lancamentos.get(0).toBuilder().historico("Venda | milho").build());
+        Lcdpr comSeparador = modelo.toBuilder()
+                .blocoQ(modelo.blocoQ().toBuilder().lancamentos(lancamentos).build())
+                .build();
+
+        assertThatThrownBy(() -> LcdprWriter.write(comSeparador))
+                .isInstanceOfSatisfying(LcdprException.class, e -> {
+                    assertThat(e.getMessage()).contains("Q100.HIST").contains("(linha 8)");
+                });
     }
 
     @Test

@@ -121,9 +121,9 @@ public final class ResumoMensal {
     public static final class Builder {
 
         private YearMonth mes;
-        private BigDecimal valorEntrada = BigDecimal.ZERO.setScale(2);
-        private BigDecimal valorSaida = BigDecimal.ZERO.setScale(2);
-        private BigDecimal saldoFinal = BigDecimal.ZERO.setScale(2);
+        private BigDecimal valorEntrada = new BigDecimal("0.00");
+        private BigDecimal valorSaida = new BigDecimal("0.00");
+        private BigDecimal saldoFinal = new BigDecimal("0.00");
         private NaturezaSaldo naturezaSaldoFinal = NaturezaSaldo.POSITIVO;
 
         /** Registro Q200, campo MES. */

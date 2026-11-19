@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import io.github.tiagoadmstz.lcdpr.modelo.ImovelRural;
+import io.github.tiagoadmstz.lcdpr.tabela.TipoContraparte;
 
 class LcdprJsonTest {
 
@@ -70,11 +71,47 @@ class LcdprJsonTest {
     }
 
     @Test
-    @DisplayName("Ignora os terceiros fora do imóvel no arquivo da versão 1.x")
-    void shouldIgnoreLegacyThirdPartiesOutsideProperty() throws IOException {
+    @DisplayName("Anexa ao imóvel de mesmo código os terceiros que a versão 1.x guardava fora dele")
+    void shouldAttachLegacyThirdPartiesToRuralProperty() throws IOException {
         ImovelRural imovel = LcdprJson.fromJson(amostra("lcdpr-legado-1x.json")).bloco0().imoveisRurais().get(0);
 
-        assertThat(imovel.terceiros()).isEmpty();
+        assertThat(imovel.codigoImovel()).isEqualTo("001");
+        assertThat(imovel.terceiros()).hasSize(1);
+        assertThat(imovel.terceiros().get(0).cpfCnpj()).isEqualTo("12345678912");
+        assertThat(imovel.terceiros().get(0).nome()).isEqualTo("JOÃO DE SOUSA");
+        assertThat(imovel.terceiros().get(0).participacao()).isEqualTo(new BigDecimal("5.20"));
+        assertThat(imovel.terceiros().get(0).tipoContraparte()).isEqualTo(TipoContraparte.PARCEIRO);
+    }
+
+    @Test
+    @DisplayName("Rejeita terceiro da versão 1.x sem imóvel de mesmo código")
+    void shouldRejectLegacyThirdPartyWithoutRuralProperty() {
+        String json = "{\"bloco_0\":{"
+                + "\"identificacao_pessoa_fisica\":{\"reg\":\"0000\"},"
+                + "\"parametros_tributacao\":{\"reg\":\"0010\"},"
+                + "\"dados_cadastrais_contribuinte\":{\"reg\":\"0030\"},"
+                + "\"exploracao_imoveis_rurais\":[{\"reg\":\"0045\",\"cod_imovel\":\"999\"}]}}";
+
+        assertThatThrownBy(() -> LcdprJson.fromJson(json))
+                .isInstanceOf(LcdprException.class)
+                .hasMessageContaining("COD_IMOVEL 999 sem 0040 correspondente");
+    }
+
+    @Test
+    @DisplayName("Rejeita conteúdo depois do objeto JSON")
+    void shouldRejectTrailingContentAfterJson() {
+        String json = LcdprJson.toJson(Amostras.valido()) + " lixo";
+
+        assertThatThrownBy(() -> LcdprJson.fromJson(json))
+                .isInstanceOf(LcdprException.class);
+    }
+
+    @Test
+    @DisplayName("Rejeita JSON nulo com LcdprException")
+    void shouldRejectNullJson() {
+        assertThatThrownBy(() -> LcdprJson.fromJson((String) null))
+                .isInstanceOf(LcdprException.class)
+                .hasMessageContaining("nulo");
     }
 
     @Test

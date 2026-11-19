@@ -294,7 +294,103 @@ class LcdprValidatorTest {
         Lcdpr umMes = comResumos(Collections.singletonList(resumosValidos().get(0)));
 
         assertThat(LcdprValidator.validate(umMes))
-                .contains(new ErroValidacao(0, "Q200", null, "Q200 com 1 meses; esperado 2"));
+                .contains(new ErroValidacao(0, "Q200", null, "Q200 com 1 mês(es); esperado 2"));
+    }
+
+    @Test
+    @DisplayName("Lançamentos fora de ordem de data são conferidos pelo saldo da posição ordenada")
+    void shouldCheckBalancesEvenWhenEntriesAreOutOfOrder() {
+        List<Lancamento> trocados = new ArrayList<>(lancamentosValidos());
+        Collections.swap(trocados, 0, 1);
+
+        assertThat(LcdprValidator.validate(comLancamentos(trocados)))
+                .containsExactly(new ErroValidacao(9, "Q100", "DATA", "Q100 fora da ordem de data"));
+    }
+
+    @Test
+    @DisplayName("CNPJ com os 14 caracteres iguais gera erro de dígito verificador no 9999")
+    void shouldRejectCnpjWithAllSameDigits() {
+        Lcdpr cnpjRepetido = comBloco9(Amostras.valido().bloco9().toBuilder()
+                .cpfCnpjContador("00000000000000")
+                .build());
+
+        assertThat(LcdprValidator.validate(cnpjRepetido))
+                .contains(new ErroValidacao(13, "9999", "IDENT_CPF_CNPJ",
+                        "9999.IDENT_CPF_CNPJ com dígito verificador inválido"));
+    }
+
+    @Test
+    @DisplayName("CNPJ numérico com dígito verificador inválido gera erro no Q100")
+    void shouldRejectNumericCnpjWithInvalidCheckDigit() {
+        Lcdpr cnpjInvalido = comLancamentos(alterar(lancamentosValidos(), 1,
+                lancamento -> lancamento.toBuilder().cpfCnpjParticipante("11222333000180").build()));
+
+        assertThat(LcdprValidator.validate(cnpjInvalido))
+                .contains(new ErroValidacao(9, "Q100", "ID_PARTIC", "Q100.ID_PARTIC com dígito verificador inválido"));
+    }
+
+    @Test
+    @DisplayName("Lançamento com imóvel não cadastrado gera erro no Q100")
+    void shouldReportLancamentoWithUnknownCodigoImovel() {
+        Lcdpr imovelInexistente = comLancamentos(alterar(lancamentosValidos(), 0,
+                lancamento -> lancamento.toBuilder().codigoImovel("777").build()));
+
+        assertThat(LcdprValidator.validate(imovelInexistente))
+                .contains(new ErroValidacao(8, "Q100", "COD_IMOVEL", "Q100.COD_IMOVEL não cadastrado no 0040"));
+    }
+
+    @Test
+    @DisplayName("Participação do 0040 acima de 100% gera erro")
+    void shouldReportParticipacaoOutOfRange() {
+        ImovelRural acima = imovel(1).toBuilder().participacao(new BigDecimal("150")).build();
+
+        assertThat(LcdprValidator.validate(comImoveis(Arrays.asList(imovel(0), acima))))
+                .contains(new ErroValidacao(6, "0040", "PARTICIPACAO", "0040.PARTICIPACAO fora do intervalo de 0 a 100"));
+    }
+
+    @Test
+    @DisplayName("Percentual de contraparte do 0045 acima de 100% gera erro")
+    void shouldReportPercContraparteOutOfRange() {
+        ImovelRural pai = imovel(0);
+        ImovelRural comPercentualAlto = pai.toBuilder()
+                .terceiros(Collections.singletonList(
+                        pai.terceiros().get(0).toBuilder().participacao(new BigDecimal("150")).build()))
+                .build();
+
+        assertThat(LcdprValidator.validate(comImoveis(Arrays.asList(comPercentualAlto, imovel(1)))))
+                .contains(new ErroValidacao(5, "0045", "PERC_CONTRAPARTE",
+                        "0045.PERC_CONTRAPARTE fora do intervalo de 0 a 100"));
+    }
+
+    @Test
+    @DisplayName("UF ausente em 0040 com país BR gera erro")
+    void shouldReportMissingUfWhenPaisIsBrazil() {
+        ImovelRural semUf = imovel(1).toBuilder().uf(null).build();
+
+        assertThat(LcdprValidator.validate(comImoveis(Arrays.asList(imovel(0), semUf))))
+                .contains(new ErroValidacao(6, "0040", "UF", "0040.UF obrigatório"));
+    }
+
+    @Test
+    @DisplayName("Saldo final do Q200 diferente do calculado gera erro com o valor esperado")
+    void shouldReportResumoSaldoDivergentFromCalculated() {
+        Lcdpr saldoAlterado = comResumos(alterar(resumosValidos(), 0,
+                resumo -> resumo.toBuilder().saldoFinal(new BigDecimal("4000.00")).build()));
+
+        assertThat(LcdprValidator.validate(saldoAlterado))
+                .contains(new ErroValidacao(11, "Q200", "SLD_FIN",
+                        "Q200.SLD_FIN divergente do calculado: esperado 5000.00 P"));
+    }
+
+    @Test
+    @DisplayName("Valor negativo no Q100 gera erro do formato citando Q100.VL_ENTRADA")
+    void shouldReportNegativeValueFromCodecWithRecordAndField() {
+        Lcdpr negativo = comLancamentos(alterar(lancamentosValidos(), 0,
+                lancamento -> lancamento.toBuilder().valorEntrada(new BigDecimal("-1")).build()));
+
+        assertThat(LcdprValidator.validate(negativo))
+                .contains(new ErroValidacao(8, "Q100", "VL_ENTRADA",
+                        "Q100.VL_ENTRADA: valor negativo não é permitido no LCDPR"));
     }
 
     @Test

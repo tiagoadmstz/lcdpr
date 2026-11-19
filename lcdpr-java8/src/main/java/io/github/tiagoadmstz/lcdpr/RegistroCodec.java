@@ -2,21 +2,19 @@ package io.github.tiagoadmstz.lcdpr;
 
 import static io.github.tiagoadmstz.lcdpr.Formatos.codigo;
 import static io.github.tiagoadmstz.lcdpr.Formatos.data;
-import static io.github.tiagoadmstz.lcdpr.Formatos.lerData;
 import static io.github.tiagoadmstz.lcdpr.Formatos.lerEnum;
-import static io.github.tiagoadmstz.lcdpr.Formatos.lerMes;
-import static io.github.tiagoadmstz.lcdpr.Formatos.lerPercentual;
-import static io.github.tiagoadmstz.lcdpr.Formatos.lerTexto;
-import static io.github.tiagoadmstz.lcdpr.Formatos.lerValor;
 import static io.github.tiagoadmstz.lcdpr.Formatos.mes;
 import static io.github.tiagoadmstz.lcdpr.Formatos.percentual;
 import static io.github.tiagoadmstz.lcdpr.Formatos.texto;
 import static io.github.tiagoadmstz.lcdpr.Formatos.valor;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
+import io.github.tiagoadmstz.lcdpr.leiaute.Campo;
+import io.github.tiagoadmstz.lcdpr.leiaute.Registro;
 import io.github.tiagoadmstz.lcdpr.modelo.ContaBancaria;
 import io.github.tiagoadmstz.lcdpr.modelo.DadosCadastrais;
 import io.github.tiagoadmstz.lcdpr.modelo.EncerramentoArquivo;
@@ -37,7 +35,7 @@ import io.github.tiagoadmstz.lcdpr.tabela.TipoLancamento;
 
 /**
  * Conversão entre o modelo e a lista de valores formatados de cada registro, na ordem do leiaute (sem o REG).
- * A lista de leitura tem exatamente os valores do registro, verificados pelo LcdprReader.
+ * Todo erro de formato sai como {@link ErroCampo}, com a mensagem no formato "REG.CAMPO: ...".
  */
 final class RegistroCodec {
 
@@ -47,97 +45,106 @@ final class RegistroCodec {
     }
 
     static List<String> valores(IdentificacaoPessoaFisica identificacao) {
-        return Collections.unmodifiableList(Arrays.asList(
-                NOME_ESC,
-                texto(identificacao.codigoVersao()),
-                texto(identificacao.cpf()),
-                texto(identificacao.nome()),
-                codigo(identificacao.indicadorInicioPeriodo(), IndicadorInicioPeriodo::codigo),
-                codigo(identificacao.situacaoEspecial(), SituacaoEspecial::codigo),
-                data(identificacao.dataSituacaoEspecial()),
-                data(identificacao.dataInicial()),
-                data(identificacao.dataFinal())));
+        return new Valores(Registro.R0000)
+                .campo(() -> NOME_ESC)
+                .campo(() -> texto(identificacao.codigoVersao()))
+                .campo(() -> texto(identificacao.cpf()))
+                .campo(() -> texto(identificacao.nome()))
+                .campo(() -> codigo(identificacao.indicadorInicioPeriodo(), IndicadorInicioPeriodo::codigo))
+                .campo(() -> codigo(identificacao.situacaoEspecial(), SituacaoEspecial::codigo))
+                .campo(() -> data(identificacao.dataSituacaoEspecial()))
+                .campo(() -> data(identificacao.dataInicial()))
+                .campo(() -> data(identificacao.dataFinal()))
+                .lista();
     }
 
     static List<String> valores(ParametrosTributacao parametros) {
-        return Collections.singletonList(codigo(parametros.formaApuracao(), FormaApuracao::codigo));
+        return new Valores(Registro.R0010)
+                .campo(() -> codigo(parametros.formaApuracao(), FormaApuracao::codigo))
+                .lista();
     }
 
     static List<String> valores(DadosCadastrais dados) {
-        return Collections.unmodifiableList(Arrays.asList(
-                texto(dados.endereco()),
-                texto(dados.numero()),
-                texto(dados.complemento()),
-                texto(dados.bairro()),
-                texto(dados.uf()),
-                texto(dados.codigoMunicipio()),
-                texto(dados.cep()),
-                texto(dados.telefone()),
-                texto(dados.email())));
+        return new Valores(Registro.R0030)
+                .campo(() -> texto(dados.endereco()))
+                .campo(() -> texto(dados.numero()))
+                .campo(() -> texto(dados.complemento()))
+                .campo(() -> texto(dados.bairro()))
+                .campo(() -> texto(dados.uf()))
+                .campo(() -> texto(dados.codigoMunicipio()))
+                .campo(() -> texto(dados.cep()))
+                .campo(() -> texto(dados.telefone()))
+                .campo(() -> texto(dados.email()))
+                .lista();
     }
 
     static List<String> valores(ImovelRural imovel) {
-        return Collections.unmodifiableList(Arrays.asList(
-                texto(imovel.codigoImovel()),
-                texto(imovel.pais()),
-                texto(imovel.moeda()),
-                texto(imovel.cadastroItr()),
-                texto(imovel.caepf()),
-                texto(imovel.inscricaoEstadual()),
-                texto(imovel.nome()),
-                texto(imovel.endereco()),
-                texto(imovel.numero()),
-                texto(imovel.complemento()),
-                texto(imovel.bairro()),
-                texto(imovel.uf()),
-                texto(imovel.codigoMunicipio()),
-                texto(imovel.cep()),
-                codigo(imovel.tipoExploracao(), TipoExploracao::codigo),
-                percentual(imovel.participacao())));
+        return new Valores(Registro.R0040)
+                .campo(() -> texto(imovel.codigoImovel()))
+                .campo(() -> texto(imovel.pais()))
+                .campo(() -> texto(imovel.moeda()))
+                .campo(() -> texto(imovel.cadastroItr()))
+                .campo(() -> texto(imovel.caepf()))
+                .campo(() -> texto(imovel.inscricaoEstadual()))
+                .campo(() -> texto(imovel.nome()))
+                .campo(() -> texto(imovel.endereco()))
+                .campo(() -> texto(imovel.numero()))
+                .campo(() -> texto(imovel.complemento()))
+                .campo(() -> texto(imovel.bairro()))
+                .campo(() -> texto(imovel.uf()))
+                .campo(() -> texto(imovel.codigoMunicipio()))
+                .campo(() -> texto(imovel.cep()))
+                .campo(() -> codigo(imovel.tipoExploracao(), TipoExploracao::codigo))
+                .campo(() -> percentual(imovel.participacao()))
+                .lista();
     }
 
     static List<String> valores(Terceiro terceiro) {
-        return Collections.unmodifiableList(Arrays.asList(
-                texto(terceiro.codigoImovel()),
-                codigo(terceiro.tipoContraparte(), TipoContraparte::codigo),
-                texto(terceiro.cpfCnpj()),
-                texto(terceiro.nome()),
-                percentual(terceiro.participacao())));
+        return new Valores(Registro.R0045)
+                .campo(() -> texto(terceiro.codigoImovel()))
+                .campo(() -> codigo(terceiro.tipoContraparte(), TipoContraparte::codigo))
+                .campo(() -> texto(terceiro.cpfCnpj()))
+                .campo(() -> texto(terceiro.nome()))
+                .campo(() -> percentual(terceiro.participacao()))
+                .lista();
     }
 
     static List<String> valores(ContaBancaria conta) {
-        return Collections.unmodifiableList(Arrays.asList(
-                texto(conta.codigoConta()),
-                texto(conta.pais()),
-                texto(conta.banco()),
-                texto(conta.nomeBanco()),
-                texto(conta.agencia()),
-                texto(conta.numeroConta())));
+        return new Valores(Registro.R0050)
+                .campo(() -> texto(conta.codigoConta()))
+                .campo(() -> texto(conta.pais()))
+                .campo(() -> texto(conta.banco()))
+                .campo(() -> texto(conta.nomeBanco()))
+                .campo(() -> texto(conta.agencia()))
+                .campo(() -> texto(conta.numeroConta()))
+                .lista();
     }
 
     static List<String> valores(Lancamento lancamento) {
-        return Collections.unmodifiableList(Arrays.asList(
-                data(lancamento.data()),
-                texto(lancamento.codigoImovel()),
-                texto(lancamento.codigoConta()),
-                texto(lancamento.numeroDocumento()),
-                codigo(lancamento.tipoDocumento(), TipoDocumento::codigo),
-                texto(lancamento.historico()),
-                texto(lancamento.cpfCnpjParticipante()),
-                codigo(lancamento.tipoLancamento(), TipoLancamento::codigo),
-                valor(lancamento.valorEntrada()),
-                valor(lancamento.valorSaida()),
-                valor(lancamento.saldoFinal()),
-                codigo(lancamento.naturezaSaldoFinal(), NaturezaSaldo::codigo)));
+        return new Valores(Registro.RQ100)
+                .campo(() -> data(lancamento.data()))
+                .campo(() -> texto(lancamento.codigoImovel()))
+                .campo(() -> texto(lancamento.codigoConta()))
+                .campo(() -> texto(lancamento.numeroDocumento()))
+                .campo(() -> codigo(lancamento.tipoDocumento(), TipoDocumento::codigo))
+                .campo(() -> texto(lancamento.historico()))
+                .campo(() -> texto(lancamento.cpfCnpjParticipante()))
+                .campo(() -> codigo(lancamento.tipoLancamento(), TipoLancamento::codigo))
+                .campo(() -> valor(lancamento.valorEntrada()))
+                .campo(() -> valor(lancamento.valorSaida()))
+                .campo(() -> valor(lancamento.saldoFinal()))
+                .campo(() -> codigo(lancamento.naturezaSaldoFinal(), NaturezaSaldo::codigo))
+                .lista();
     }
 
     static List<String> valores(ResumoMensal resumo) {
-        return Collections.unmodifiableList(Arrays.asList(
-                mes(resumo.mes()),
-                valor(resumo.valorEntrada()),
-                valor(resumo.valorSaida()),
-                valor(resumo.saldoFinal()),
-                codigo(resumo.naturezaSaldoFinal(), NaturezaSaldo::codigo)));
+        return new Valores(Registro.RQ200)
+                .campo(() -> mes(resumo.mes()))
+                .campo(() -> valor(resumo.valorEntrada()))
+                .campo(() -> valor(resumo.valorSaida()))
+                .campo(() -> valor(resumo.saldoFinal()))
+                .campo(() -> codigo(resumo.naturezaSaldoFinal(), NaturezaSaldo::codigo))
+                .lista();
     }
 
     static List<String> valores(EncerramentoArquivo encerramento, long quantidadeLinhas) {
@@ -153,13 +160,14 @@ final class RegistroCodec {
     }
 
     private static List<String> valoresEncerramento(EncerramentoArquivo bloco9, String quantidadeLinhas) {
-        return Collections.unmodifiableList(Arrays.asList(
-                texto(bloco9.nomeContador()),
-                texto(bloco9.cpfCnpjContador()),
-                texto(bloco9.crcContador()),
-                texto(bloco9.emailContador()),
-                texto(bloco9.telefoneContador()),
-                quantidadeLinhas));
+        return new Valores(Registro.R9999)
+                .campo(() -> texto(bloco9.nomeContador()))
+                .campo(() -> texto(bloco9.cpfCnpjContador()))
+                .campo(() -> texto(bloco9.crcContador()))
+                .campo(() -> texto(bloco9.emailContador()))
+                .campo(() -> texto(bloco9.telefoneContador()))
+                .campo(() -> quantidadeLinhas)
+                .lista();
     }
 
     static IdentificacaoPessoaFisica identificacao(List<String> valores) {
@@ -167,114 +175,123 @@ final class RegistroCodec {
             throw new LcdprException("0000.NOME_ESC deve ser LCDPR");
         }
         return IdentificacaoPessoaFisica.builder()
-                .codigoVersao(lerTexto(valores.get(1)))
-                .cpf(lerTexto(valores.get(2)))
-                .nome(lerTexto(valores.get(3)))
-                .indicadorInicioPeriodo(lerEnum(valores.get(4), IndicadorInicioPeriodo::fromCodigo))
-                .situacaoEspecial(lerEnum(valores.get(5), SituacaoEspecial::fromCodigo))
-                .dataSituacaoEspecial(lerData(valores.get(6)))
-                .dataInicial(lerData(valores.get(7)))
-                .dataFinal(lerData(valores.get(8)))
+                .codigoVersao(lerCampo(Registro.R0000, valores, 1, Formatos::lerTexto))
+                .cpf(lerCampo(Registro.R0000, valores, 2, Formatos::lerTexto))
+                .nome(lerCampo(Registro.R0000, valores, 3, Formatos::lerTexto))
+                .indicadorInicioPeriodo(lerCampo(Registro.R0000, valores, 4,
+                        campo -> lerEnum(campo, IndicadorInicioPeriodo::fromCodigo)))
+                .situacaoEspecial(lerCampo(Registro.R0000, valores, 5,
+                        campo -> lerEnum(campo, SituacaoEspecial::fromCodigo)))
+                .dataSituacaoEspecial(lerCampo(Registro.R0000, valores, 6, Formatos::lerData))
+                .dataInicial(lerCampo(Registro.R0000, valores, 7, Formatos::lerData))
+                .dataFinal(lerCampo(Registro.R0000, valores, 8, Formatos::lerData))
                 .build();
     }
 
     static ParametrosTributacao parametrosTributacao(List<String> valores) {
         return ParametrosTributacao.builder()
-                .formaApuracao(lerEnum(valores.get(0), FormaApuracao::fromCodigo))
+                .formaApuracao(lerCampo(Registro.R0010, valores, 0,
+                        campo -> lerEnum(campo, FormaApuracao::fromCodigo)))
                 .build();
     }
 
     static DadosCadastrais dadosCadastrais(List<String> valores) {
         return DadosCadastrais.builder()
-                .endereco(lerTexto(valores.get(0)))
-                .numero(lerTexto(valores.get(1)))
-                .complemento(lerTexto(valores.get(2)))
-                .bairro(lerTexto(valores.get(3)))
-                .uf(lerTexto(valores.get(4)))
-                .codigoMunicipio(lerTexto(valores.get(5)))
-                .cep(lerTexto(valores.get(6)))
-                .telefone(lerTexto(valores.get(7)))
-                .email(lerTexto(valores.get(8)))
+                .endereco(lerCampo(Registro.R0030, valores, 0, Formatos::lerTexto))
+                .numero(lerCampo(Registro.R0030, valores, 1, Formatos::lerTexto))
+                .complemento(lerCampo(Registro.R0030, valores, 2, Formatos::lerTexto))
+                .bairro(lerCampo(Registro.R0030, valores, 3, Formatos::lerTexto))
+                .uf(lerCampo(Registro.R0030, valores, 4, Formatos::lerTexto))
+                .codigoMunicipio(lerCampo(Registro.R0030, valores, 5, Formatos::lerTexto))
+                .cep(lerCampo(Registro.R0030, valores, 6, Formatos::lerTexto))
+                .telefone(lerCampo(Registro.R0030, valores, 7, Formatos::lerTexto))
+                .email(lerCampo(Registro.R0030, valores, 8, Formatos::lerTexto))
                 .build();
     }
 
     static ImovelRural imovelRural(List<String> valores) {
         return ImovelRural.builder()
-                .codigoImovel(lerTexto(valores.get(0)))
-                .pais(lerTexto(valores.get(1)))
-                .moeda(lerTexto(valores.get(2)))
-                .cadastroItr(lerTexto(valores.get(3)))
-                .caepf(lerTexto(valores.get(4)))
-                .inscricaoEstadual(lerTexto(valores.get(5)))
-                .nome(lerTexto(valores.get(6)))
-                .endereco(lerTexto(valores.get(7)))
-                .numero(lerTexto(valores.get(8)))
-                .complemento(lerTexto(valores.get(9)))
-                .bairro(lerTexto(valores.get(10)))
-                .uf(lerTexto(valores.get(11)))
-                .codigoMunicipio(lerTexto(valores.get(12)))
-                .cep(lerTexto(valores.get(13)))
-                .tipoExploracao(lerEnum(valores.get(14), TipoExploracao::fromCodigo))
-                .participacao(lerPercentual(valores.get(15)))
+                .codigoImovel(lerCampo(Registro.R0040, valores, 0, Formatos::lerTexto))
+                .pais(lerCampo(Registro.R0040, valores, 1, Formatos::lerTexto))
+                .moeda(lerCampo(Registro.R0040, valores, 2, Formatos::lerTexto))
+                .cadastroItr(lerCampo(Registro.R0040, valores, 3, Formatos::lerTexto))
+                .caepf(lerCampo(Registro.R0040, valores, 4, Formatos::lerTexto))
+                .inscricaoEstadual(lerCampo(Registro.R0040, valores, 5, Formatos::lerTexto))
+                .nome(lerCampo(Registro.R0040, valores, 6, Formatos::lerTexto))
+                .endereco(lerCampo(Registro.R0040, valores, 7, Formatos::lerTexto))
+                .numero(lerCampo(Registro.R0040, valores, 8, Formatos::lerTexto))
+                .complemento(lerCampo(Registro.R0040, valores, 9, Formatos::lerTexto))
+                .bairro(lerCampo(Registro.R0040, valores, 10, Formatos::lerTexto))
+                .uf(lerCampo(Registro.R0040, valores, 11, Formatos::lerTexto))
+                .codigoMunicipio(lerCampo(Registro.R0040, valores, 12, Formatos::lerTexto))
+                .cep(lerCampo(Registro.R0040, valores, 13, Formatos::lerTexto))
+                .tipoExploracao(lerCampo(Registro.R0040, valores, 14,
+                        campo -> lerEnum(campo, TipoExploracao::fromCodigo)))
+                .participacao(lerCampo(Registro.R0040, valores, 15, Formatos::lerPercentual))
                 .build();
     }
 
     static Terceiro terceiro(List<String> valores) {
         return Terceiro.builder()
-                .codigoImovel(lerTexto(valores.get(0)))
-                .tipoContraparte(lerEnum(valores.get(1), TipoContraparte::fromCodigo))
-                .cpfCnpj(lerTexto(valores.get(2)))
-                .nome(lerTexto(valores.get(3)))
-                .participacao(lerPercentual(valores.get(4)))
+                .codigoImovel(lerCampo(Registro.R0045, valores, 0, Formatos::lerTexto))
+                .tipoContraparte(lerCampo(Registro.R0045, valores, 1,
+                        campo -> lerEnum(campo, TipoContraparte::fromCodigo)))
+                .cpfCnpj(lerCampo(Registro.R0045, valores, 2, Formatos::lerTexto))
+                .nome(lerCampo(Registro.R0045, valores, 3, Formatos::lerTexto))
+                .participacao(lerCampo(Registro.R0045, valores, 4, Formatos::lerPercentual))
                 .build();
     }
 
     static ContaBancaria contaBancaria(List<String> valores) {
         return ContaBancaria.builder()
-                .codigoConta(lerTexto(valores.get(0)))
-                .pais(lerTexto(valores.get(1)))
-                .banco(lerTexto(valores.get(2)))
-                .nomeBanco(lerTexto(valores.get(3)))
-                .agencia(lerTexto(valores.get(4)))
-                .numeroConta(lerTexto(valores.get(5)))
+                .codigoConta(lerCampo(Registro.R0050, valores, 0, Formatos::lerTexto))
+                .pais(lerCampo(Registro.R0050, valores, 1, Formatos::lerTexto))
+                .banco(lerCampo(Registro.R0050, valores, 2, Formatos::lerTexto))
+                .nomeBanco(lerCampo(Registro.R0050, valores, 3, Formatos::lerTexto))
+                .agencia(lerCampo(Registro.R0050, valores, 4, Formatos::lerTexto))
+                .numeroConta(lerCampo(Registro.R0050, valores, 5, Formatos::lerTexto))
                 .build();
     }
 
     static Lancamento lancamento(List<String> valores) {
         return Lancamento.builder()
-                .data(lerData(valores.get(0)))
-                .codigoImovel(lerTexto(valores.get(1)))
-                .codigoConta(lerTexto(valores.get(2)))
-                .numeroDocumento(lerTexto(valores.get(3)))
-                .tipoDocumento(lerEnum(valores.get(4), TipoDocumento::fromCodigo))
-                .historico(lerTexto(valores.get(5)))
-                .cpfCnpjParticipante(lerTexto(valores.get(6)))
-                .tipoLancamento(lerEnum(valores.get(7), TipoLancamento::fromCodigo))
-                .valorEntrada(lerValor(valores.get(8)))
-                .valorSaida(lerValor(valores.get(9)))
-                .saldoFinal(lerValor(valores.get(10)))
-                .naturezaSaldoFinal(lerEnum(valores.get(11), NaturezaSaldo::fromCodigo))
+                .data(lerCampo(Registro.RQ100, valores, 0, Formatos::lerData))
+                .codigoImovel(lerCampo(Registro.RQ100, valores, 1, Formatos::lerTexto))
+                .codigoConta(lerCampo(Registro.RQ100, valores, 2, Formatos::lerTexto))
+                .numeroDocumento(lerCampo(Registro.RQ100, valores, 3, Formatos::lerTexto))
+                .tipoDocumento(lerCampo(Registro.RQ100, valores, 4,
+                        campo -> lerEnum(campo, TipoDocumento::fromCodigo)))
+                .historico(lerCampo(Registro.RQ100, valores, 5, Formatos::lerTexto))
+                .cpfCnpjParticipante(lerCampo(Registro.RQ100, valores, 6, Formatos::lerTexto))
+                .tipoLancamento(lerCampo(Registro.RQ100, valores, 7,
+                        campo -> lerEnum(campo, TipoLancamento::fromCodigo)))
+                .valorEntrada(lerCampo(Registro.RQ100, valores, 8, Formatos::lerValor))
+                .valorSaida(lerCampo(Registro.RQ100, valores, 9, Formatos::lerValor))
+                .saldoFinal(lerCampo(Registro.RQ100, valores, 10, Formatos::lerValor))
+                .naturezaSaldoFinal(lerCampo(Registro.RQ100, valores, 11,
+                        campo -> lerEnum(campo, NaturezaSaldo::fromCodigo)))
                 .build();
     }
 
     static ResumoMensal resumoMensal(List<String> valores) {
         return ResumoMensal.builder()
-                .mes(lerMes(valores.get(0)))
-                .valorEntrada(lerValor(valores.get(1)))
-                .valorSaida(lerValor(valores.get(2)))
-                .saldoFinal(lerValor(valores.get(3)))
-                .naturezaSaldoFinal(lerEnum(valores.get(4), NaturezaSaldo::fromCodigo))
+                .mes(lerCampo(Registro.RQ200, valores, 0, Formatos::lerMes))
+                .valorEntrada(lerCampo(Registro.RQ200, valores, 1, Formatos::lerValor))
+                .valorSaida(lerCampo(Registro.RQ200, valores, 2, Formatos::lerValor))
+                .saldoFinal(lerCampo(Registro.RQ200, valores, 3, Formatos::lerValor))
+                .naturezaSaldoFinal(lerCampo(Registro.RQ200, valores, 4,
+                        campo -> lerEnum(campo, NaturezaSaldo::fromCodigo)))
                 .build();
     }
 
     static EncerramentoArquivo encerramento(List<String> valores) {
         return EncerramentoArquivo.builder()
-                .nomeContador(lerTexto(valores.get(0)))
-                .cpfCnpjContador(lerTexto(valores.get(1)))
-                .crcContador(lerTexto(valores.get(2)))
-                .emailContador(lerTexto(valores.get(3)))
-                .telefoneContador(lerTexto(valores.get(4)))
-                .quantidadeLinhas(lerQuantidadeLinhas(valores.get(5)))
+                .nomeContador(lerCampo(Registro.R9999, valores, 0, Formatos::lerTexto))
+                .cpfCnpjContador(lerCampo(Registro.R9999, valores, 1, Formatos::lerTexto))
+                .crcContador(lerCampo(Registro.R9999, valores, 2, Formatos::lerTexto))
+                .emailContador(lerCampo(Registro.R9999, valores, 3, Formatos::lerTexto))
+                .telefoneContador(lerCampo(Registro.R9999, valores, 4, Formatos::lerTexto))
+                .quantidadeLinhas(lerCampo(Registro.R9999, valores, 5, RegistroCodec::lerQuantidadeLinhas))
                 .build();
     }
 
@@ -283,12 +300,68 @@ final class RegistroCodec {
             return null;
         }
         if (!campo.matches("[0-9]+")) {
-            throw new LcdprException("9999.QTD_LIN deve conter só dígitos");
+            throw new LcdprException("deve conter só dígitos");
         }
         try {
             return Long.parseLong(campo);
         } catch (NumberFormatException e) {
-            throw new LcdprException("9999.QTD_LIN fora do intervalo numérico", e);
+            throw new LcdprException("fora do intervalo numérico", e);
+        }
+    }
+
+    private static <T> T lerCampo(Registro registro, List<String> valores, int indice,
+            Function<String, T> interpretacao) {
+        try {
+            return interpretacao.apply(valores.get(indice));
+        } catch (LcdprException e) {
+            throw erro(registro, indice, e);
+        }
+    }
+
+    private static ErroCampo erro(Registro registro, int indice, LcdprException causa) {
+        Campo campo = registro.campos().get(indice);
+        return new ErroCampo(campo.nome(), registro.codigo() + "." + campo.nome() + ": " + causa.getMessage(), causa);
+    }
+
+    /** Erro de formato de um campo; o campo indica o nome do leiaute para o validador. */
+    static final class ErroCampo extends LcdprException {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String campo;
+
+        ErroCampo(String campo, String mensagem, Throwable causa) {
+            super(mensagem, causa);
+            this.campo = campo;
+        }
+
+        /** Nome do campo no leiaute, como "VL_ENTRADA". */
+        String campo() {
+            return campo;
+        }
+    }
+
+    /** Lista de valores formatados de um registro, preenchida campo a campo na ordem do leiaute. */
+    private static final class Valores {
+
+        private final Registro registro;
+        private final List<String> lista = new ArrayList<>();
+
+        Valores(Registro registro) {
+            this.registro = registro;
+        }
+
+        Valores campo(Supplier<String> formatacao) {
+            try {
+                lista.add(formatacao.get());
+            } catch (LcdprException e) {
+                throw erro(registro, lista.size(), e);
+            }
+            return this;
+        }
+
+        List<String> lista() {
+            return lista;
         }
     }
 }

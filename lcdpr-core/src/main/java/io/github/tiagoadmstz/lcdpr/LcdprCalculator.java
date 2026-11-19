@@ -21,7 +21,7 @@ import io.github.tiagoadmstz.lcdpr.tabela.NaturezaSaldo;
  */
 public final class LcdprCalculator {
 
-    private static final Comparator<LocalDate> ORDEM_DATA = Comparator.nullsLast(Comparator.naturalOrder());
+    static final Comparator<LocalDate> ORDEM_DATA = Comparator.nullsLast(Comparator.naturalOrder());
 
     private LcdprCalculator() {
     }

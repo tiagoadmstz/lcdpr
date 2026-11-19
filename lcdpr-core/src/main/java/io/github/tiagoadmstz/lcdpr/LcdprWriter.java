@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import io.github.tiagoadmstz.lcdpr.leiaute.Registro;
 import io.github.tiagoadmstz.lcdpr.modelo.AberturaIdentificacao;
@@ -87,34 +88,39 @@ public final class LcdprWriter {
         DadosCadastrais dados = exigir(bloco0.dadosCadastrais(), "Registro 0030");
 
         List<String> linhas = new ArrayList<>();
-        linhas.add(linha(Registro.R0000, RegistroCodec.valores(identificacao)));
-        linhas.add(linha(Registro.R0010, RegistroCodec.valores(parametros)));
-        linhas.add(linha(Registro.R0030, RegistroCodec.valores(dados)));
+        adiciona(linhas, Registro.R0000, () -> RegistroCodec.valores(identificacao));
+        adiciona(linhas, Registro.R0010, () -> RegistroCodec.valores(parametros));
+        adiciona(linhas, Registro.R0030, () -> RegistroCodec.valores(dados));
         for (ImovelRural imovel : bloco0.imoveisRurais()) {
-            linhas.add(linha(Registro.R0040, RegistroCodec.valores(imovel)));
+            adiciona(linhas, Registro.R0040, () -> RegistroCodec.valores(imovel));
             for (Terceiro terceiro : imovel.terceiros()) {
-                linhas.add(linha(Registro.R0045, RegistroCodec.valores(terceiro)));
+                adiciona(linhas, Registro.R0045, () -> RegistroCodec.valores(terceiro));
             }
         }
         for (ContaBancaria conta : bloco0.contasBancarias()) {
-            linhas.add(linha(Registro.R0050, RegistroCodec.valores(conta)));
+            adiciona(linhas, Registro.R0050, () -> RegistroCodec.valores(conta));
         }
         DemonstrativoResultado blocoQ = lcdpr.blocoQ();
         if (blocoQ != null) {
             for (Lancamento lancamento : blocoQ.lancamentos()) {
-                linhas.add(linha(Registro.RQ100, RegistroCodec.valores(lancamento)));
+                adiciona(linhas, Registro.RQ100, () -> RegistroCodec.valores(lancamento));
             }
             for (ResumoMensal resumo : blocoQ.resumosMensais()) {
-                linhas.add(linha(Registro.RQ200, RegistroCodec.valores(resumo)));
+                adiciona(linhas, Registro.RQ200, () -> RegistroCodec.valores(resumo));
             }
         }
         long quantidadeLinhas = linhas.size() + 1L;
-        linhas.add(linha(Registro.R9999, RegistroCodec.valores(lcdpr.bloco9(), quantidadeLinhas)));
+        adiciona(linhas, Registro.R9999, () -> RegistroCodec.valores(lcdpr.bloco9(), quantidadeLinhas));
         return linhas;
     }
 
-    private static String linha(Registro registro, List<String> valores) {
-        return registro.codigo() + Formatos.SEPARADOR + String.join(Formatos.SEPARADOR, valores);
+    private static void adiciona(List<String> linhas, Registro registro, Supplier<List<String>> valores) {
+        int numero = linhas.size() + 1;
+        try {
+            linhas.add(registro.codigo() + Formatos.SEPARADOR + String.join(Formatos.SEPARADOR, valores.get()));
+        } catch (LcdprException e) {
+            throw new LcdprException(e.getMessage(), numero, e);
+        }
     }
 
     private static <T> T exigir(T valor, String nome) {

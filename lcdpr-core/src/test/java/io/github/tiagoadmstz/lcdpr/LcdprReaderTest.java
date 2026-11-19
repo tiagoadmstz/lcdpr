@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -112,6 +113,41 @@ class LcdprReaderTest {
     @DisplayName("Lê arquivo com quebra de linha somente LF igual à amostra")
     void shouldReadLfOnlyFileAsSample() throws IOException {
         assertThat(LcdprReader.read(amostra().replace("\r\n", "\n"))).isEqualTo(Amostras.valido());
+    }
+
+    @Test
+    @DisplayName("Ignora o BOM UTF-8 no início do arquivo")
+    void shouldIgnoreUtf8Bom() throws IOException {
+        assertThat(LcdprReader.read("\uFEFF" + amostra())).isEqualTo(Amostras.valido());
+    }
+
+    @Test
+    @DisplayName("Rejeita conteúdo nulo com LcdprException, em String, Reader e Path")
+    void shouldRejectNullInput() {
+        assertThatThrownBy(() -> LcdprReader.read((String) null))
+                .isInstanceOf(LcdprException.class)
+                .hasMessageContaining("nulo");
+        assertThatThrownBy(() -> LcdprReader.read((Reader) null))
+                .isInstanceOf(LcdprException.class)
+                .hasMessageContaining("nulo");
+        assertThatThrownBy(() -> LcdprReader.read(null, StandardCharsets.UTF_8))
+                .isInstanceOf(LcdprException.class)
+                .hasMessageContaining("nulo");
+    }
+
+    @Test
+    @DisplayName("Informa o registro, o campo e a linha quando a data do Q100 é inválida")
+    void shouldNameRecordAndFieldInReadError() {
+        String texto = arquivo(
+                CABECALHO,
+                "Q100|31022019|001|001|2|3|Historico|12345678909|1|1000000|000|1000000|P",
+                "9999||||||3");
+
+        assertThatThrownBy(() -> LcdprReader.read(texto))
+                .isInstanceOfSatisfying(LcdprException.class, e -> {
+                    assertThat(e.linha()).isEqualTo(2);
+                    assertThat(e.getMessage()).contains("Q100.DATA").endsWith("(linha 2)");
+                });
     }
 
     @Test

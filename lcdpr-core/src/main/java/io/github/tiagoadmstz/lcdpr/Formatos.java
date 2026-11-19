@@ -35,7 +35,7 @@ final class Formatos {
             return "";
         }
         if (valor.contains(SEPARADOR) || valor.contains("\r") || valor.contains("\n")) {
-            throw new LcdprException("Texto do campo contém '|', CR ou LF");
+            throw new LcdprException("texto do campo contém '|', CR ou LF");
         }
         return valor;
     }
@@ -64,7 +64,7 @@ final class Formatos {
         try {
             return LocalDate.parse(campo, FORMATO_DATA);
         } catch (DateTimeParseException e) {
-            throw new LcdprException("Data inválida no formato ddMMaaaa", e);
+            throw new LcdprException("data inválida no formato ddMMaaaa", e);
         }
     }
 
@@ -84,7 +84,7 @@ final class Formatos {
         try {
             return YearMonth.parse(campo, FORMATO_MES);
         } catch (DateTimeParseException e) {
-            throw new LcdprException("Mês inválido no formato MMaaaa", e);
+            throw new LcdprException("mês inválido no formato MMaaaa", e);
         }
     }
 
@@ -108,7 +108,7 @@ final class Formatos {
         }
         String digitos = digitosDecimais(valor);
         if (digitos.length() > DIGITOS_PERCENTUAL) {
-            throw new LcdprException("Percentual com mais de 5 dígitos");
+            throw new LcdprException("percentual com mais de 5 dígitos");
         }
         return completar(digitos, DIGITOS_PERCENTUAL);
     }
@@ -141,7 +141,7 @@ final class Formatos {
     private static String digitosDecimais(BigDecimal valor) {
         BigDecimal arredondado = valor.setScale(CASAS_DECIMAIS, RoundingMode.HALF_UP);
         if (arredondado.signum() < 0) {
-            throw new LcdprException("Valor negativo não é permitido no LCDPR");
+            throw new LcdprException("valor negativo não é permitido no LCDPR");
         }
         return arredondado.unscaledValue().toString();
     }
@@ -151,7 +151,7 @@ final class Formatos {
             return null;
         }
         if (!campo.matches("[0-9]+")) {
-            throw new LcdprException("Valor numérico com caractere que não é dígito");
+            throw new LcdprException("valor numérico com caractere que não é dígito");
         }
         return new BigDecimal(new BigInteger(campo), CASAS_DECIMAIS);
     }

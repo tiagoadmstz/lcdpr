@@ -34,6 +34,7 @@ import io.github.tiagoadmstz.lcdpr.modelo.Terceiro;
 public final class LcdprReader {
 
     private static final String SEPARADOR_REGEX = "\\|";
+    private static final String BOM = "﻿";
     private static final Set<Registro> UNICOS = EnumSet.of(
             Registro.R0000, Registro.R0010, Registro.R0030, Registro.R9999);
 
@@ -41,14 +42,18 @@ public final class LcdprReader {
     }
 
     /**
-     * Lê o conteúdo completo do arquivo.
+     * Lê o conteúdo completo do arquivo. Um BOM UTF-8 no início é ignorado.
      *
      * @param conteudo texto do arquivo
      * @return modelo lido; o QTD_LIN do 9999 é o valor do arquivo
-     * @throws LcdprException se o arquivo estiver fora do leiaute
+     * @throws LcdprException se o conteúdo for nulo ou o arquivo estiver fora do leiaute
      */
     public static Lcdpr read(String conteudo) {
-        List<String> linhas = dividirLinhas(conteudo);
+        if (conteudo == null) {
+            throw new LcdprException("Conteúdo do LCDPR nulo");
+        }
+        String texto = conteudo.startsWith(BOM) ? conteudo.substring(BOM.length()) : conteudo;
+        List<String> linhas = dividirLinhas(texto);
         if (linhas.isEmpty()) {
             throw new LcdprException("Arquivo LCDPR vazio");
         }
@@ -64,9 +69,12 @@ public final class LcdprReader {
      *
      * @param leitor origem do texto
      * @return modelo lido
-     * @throws LcdprException se o arquivo estiver fora do leiaute ou houver falha de E/S
+     * @throws LcdprException se o leitor for nulo, o arquivo estiver fora do leiaute ou houver falha de E/S
      */
     public static Lcdpr read(Reader leitor) {
+        if (leitor == null) {
+            throw new LcdprException("Leitor do LCDPR nulo");
+        }
         StringWriter conteudo = new StringWriter();
         char[] buffer = new char[8192];
         try {
@@ -86,9 +94,12 @@ public final class LcdprReader {
      * @param arquivo caminho do arquivo
      * @param charset codificação do arquivo
      * @return modelo lido
-     * @throws LcdprException se o arquivo estiver fora do leiaute ou houver falha de E/S
+     * @throws LcdprException se o caminho for nulo, o arquivo estiver fora do leiaute ou houver falha de E/S
      */
     public static Lcdpr read(Path arquivo, Charset charset) {
+        if (arquivo == null) {
+            throw new LcdprException("Caminho do arquivo LCDPR nulo");
+        }
         try {
             String conteudo = charset.newDecoder()
                     .onMalformedInput(CodingErrorAction.REPORT)
@@ -120,7 +131,7 @@ public final class LcdprReader {
     private static final class Leitura {
 
         private final Set<Registro> vistos = EnumSet.noneOf(Registro.class);
-        private final List<ImovelRural> imoveis = new ArrayList<>();
+        private final List<ImovelRural.Builder> imoveis = new ArrayList<>();
         private final List<ContaBancaria> contas = new ArrayList<>();
         private final List<Lancamento> lancamentos = new ArrayList<>();
         private final List<ResumoMensal> resumos = new ArrayList<>();
@@ -165,11 +176,15 @@ public final class LcdprReader {
             if (encerramento == null) {
                 throw new LcdprException("Arquivo LCDPR sem registro 9999");
             }
+            List<ImovelRural> imoveisMontados = new ArrayList<>(imoveis.size());
+            for (ImovelRural.Builder imovel : imoveis) {
+                imoveisMontados.add(imovel.build());
+            }
             AberturaIdentificacao bloco0 = AberturaIdentificacao.builder()
                     .identificacao(identificacao)
                     .parametrosTributacao(parametrosTributacao)
                     .dadosCadastrais(dadosCadastrais)
-                    .imoveisRurais(imoveis)
+                    .imoveisRurais(imoveisMontados)
                     .contasBancarias(contas)
                     .build();
             DemonstrativoResultado blocoQ = DemonstrativoResultado.builder()
@@ -203,7 +218,7 @@ public final class LcdprReader {
                     dadosCadastrais = RegistroCodec.dadosCadastrais(valores);
                     break;
                 case R0040:
-                    imoveis.add(RegistroCodec.imovelRural(valores));
+                    imoveis.add(RegistroCodec.imovelRural(valores).toBuilder());
                     break;
                 case R0045:
                     anexaTerceiro(RegistroCodec.terceiro(valores));
@@ -228,8 +243,7 @@ public final class LcdprReader {
             if (imoveis.isEmpty()) {
                 throw new LcdprException("Registro 0045 sem 0040 anterior");
             }
-            int ultimo = imoveis.size() - 1;
-            imoveis.set(ultimo, imoveis.get(ultimo).toBuilder().addTerceiro(terceiro).build());
+            imoveis.get(imoveis.size() - 1).addTerceiro(terceiro);
         }
     }
 }
