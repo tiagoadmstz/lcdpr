@@ -11,11 +11,10 @@ calcula os saldos do Bloco Q. Publicada no GitHub Packages.
 
 ## Estado atual × alvo
 
-- **Hoje** (`src/`, última release 1.0.2): módulo único em Java 8, pacote
-  `br.com.dsc.lcdpr`, Lombok, modelos mutáveis e bugs conhecidos. É legado:
-  só recebe correção pedida.
-- **Alvo 2.0** ([roadmap](docs/roadmap.md)): três artefatos com a mesma API,
-  no molde do `hl7-handler` (`C:\Users\fastw\DEV\hl7-handler`):
+- **Legado**: até a release 1.0.2, módulo único em Java 8, pacote
+  `br.com.dsc.lcdpr`, com Lombok. O código está no histórico do Git (tag `1.0.2`).
+- **2.0** ([roadmap](docs/roadmap.md), [spec 01](docs/specs/01-lcdpr-2.0.md)):
+  três artefatos com a mesma API, no molde do `hl7-handler` (`C:\Users\fastw\DEV\hl7-handler`):
 
 | Módulo | Java mínimo | Jackson | Sintaxe |
 |---|---|---|---|
@@ -24,7 +23,7 @@ calcula os saldos do Bloco Q. Publicada no GitHub Packages.
 | `lcdpr-java8` | 8 | 2 | sem `var`, `List.of`, `isBlank` etc. |
 
 Pacote e groupId `io.github.tiagoadmstz.lcdpr`, sem Lombok, modelos
-imutáveis, nomes de domínio em português do leiaute (decisões D1–D4 do roadmap).
+imutáveis, nomes de domínio em português do leiaute (decisões D1–D6 do roadmap).
 
 ## Regra principal: módulos independentes
 
@@ -37,9 +36,7 @@ imutáveis, nomes de domínio em português do leiaute (decisões D1–D4 do roa
 
 ## Build
 
-- Hoje: `mvn -B test` (Maven do PATH, JDK 25 compilando com `source/target 1.8`).
-  Os testes gravam `LCDPR_03072020.*` na raiz (ignorados pelo `.gitignore`).
-- Alvo (F1): `./mvnw verify` compila com o JDK 25 (`--release` do mínimo de
+- `./mvnw verify` compila com o JDK 25 (`--release` do mínimo de
   cada módulo) e roda os testes na JVM do módulo (core em 17 e 25, java11 em
   11, java8 em 8), via `~/.m2/toolchains.xml` (8, 11, 17 e 25 já configurados).
 - **Não alterar `JAVA_HOME` nem o `java` do `PATH`.**
@@ -88,6 +85,6 @@ Ler a skill **antes** de agir, mesmo que não tenha sido carregada sozinha:
 
 ## Referências
 
-- Manual, leiaute e tutorial da RFB: `_arquivos/` (vai para `docs/leiaute/` na F1).
+- Manual, leiaute e tutorial da RFB: `docs/leiaute/`.
 - [Roadmap](docs/roadmap.md): diagnóstico, decisões, perguntas em aberto e fases.
 - [Specs](docs/specs/README.md): detalhe de cada fase.

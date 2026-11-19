@@ -6,8 +6,8 @@ description: Regras do leiaute 1.3 do LCDPR (Livro Caixa Digital do Produtor Rur
 # Leiaute do LCDPR (versão 1.3)
 
 Fonte: Manual de Preenchimento do LCDPR, anexo do Ato Declaratório Executivo
-COPES nº 1/2020, em `_arquivos/manual-de-preenchimento-do-lcdpr-1-3.pdf`
-(planilha do leiaute em `_arquivos/leiaute-1-3-lcdpr.xls`). Em caso de
+COPES nº 1/2020, em `docs/leiaute/manual-de-preenchimento-do-lcdpr-1-3.pdf`
+(planilha do leiaute em `docs/leiaute/leiaute-1-3-lcdpr.xls`). Em caso de
 dúvida, o manual prevalece sobre esta skill e sobre o código.
 Para ler o PDF: `pdftotext -layout <pdf> <saida>` (saída em Latin-1).
 
@@ -110,5 +110,7 @@ os repetidos e o próprio 9999. Calcular sempre, nunca pedir ao usuário.
 Os exemplos de preenchimento do manual usam dados fictícios
 (`JOSÉ DA SILVA`, CPF `11111111191`, `Fazenda Tudo Certo`) e servem de amostra
 para os testes. O `README.md` e `src/test/resources` reproduzem esses exemplos.
+Os CPFs dos exemplos do manual (`11111111191`, `12345678912`) têm dígito verificador
+inválido: nas amostras, usar `11144477735`, `12345678909` (CPF) e `11222333000181` (CNPJ).
 Atenção: o exemplo do Q200 no manual tem erros de digitação (`100000,00` no
 texto, `|P` grudado em `Q200`); conferir contra a regra, não contra o texto.
