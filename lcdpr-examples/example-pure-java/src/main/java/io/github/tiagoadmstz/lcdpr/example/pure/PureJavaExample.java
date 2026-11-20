@@ -98,7 +98,7 @@ public final class PureJavaExample {
                 .pais("BR")
                 .moeda("BRL")
                 .cadastroItr("12345678")
-                .caepf("29311861000172")
+                .caepf("29311861000184")
                 .endereco("Estrada Municipal KM 10")
                 .bairro("Zona Rural")
                 .uf("SP")

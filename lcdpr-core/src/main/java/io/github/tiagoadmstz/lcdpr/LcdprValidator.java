@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -43,6 +44,7 @@ public final class LcdprValidator {
     private static final int DIGITOS_PERCENTUAL = 5;
     private static final int TAMANHO_CPF = 11;
     private static final int MODULO_DV = 11;
+    private static final int AJUSTE_CAEPF = 12;
     private static final int[] PESOS_CPF_PRIMEIRO = {10, 9, 8, 7, 6, 5, 4, 3, 2};
     private static final int[] PESOS_CPF_SEGUNDO = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
     private static final int[] PESOS_CNPJ_PRIMEIRO = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
@@ -81,19 +83,22 @@ public final class LcdprValidator {
     }
 
     /**
-     * Valida o dígito verificador de um CAEPF (14 dígitos numéricos, módulo 11).
+     * Valida o dígito verificador de um CAEPF (14 dígitos numéricos: CPF do titular, ordem e 2 DV).
+     * O algoritmo é o divulgado por fontes da comunidade (módulo 11 com pesos de 9 a 2 a partir da unidade
+     * e ajuste final de +12), não por documento oficial da RFB.
      *
      * @param caepf número do CAEPF com 14 dígitos
      * @return true se o dígito verificador for válido
      */
     public static boolean caepfValido(String caepf) {
-        if (caepf == null || caepf.length() != 14 || !caepf.matches("[0-9]{14}")) {
+        if (caepf == null || !caepf.matches("[0-9]{14}")) {
             return false;
         }
-        if (caepf.chars().distinct().count() == 1) {
-            return false;
-        }
-        return cnpjValido(caepf);
+        String base = caepf.substring(0, 12);
+        int primeiro = digitoCaepf(base);
+        int segundo = digitoCaepf(base + primeiro);
+        int esperado = (primeiro * 10 + segundo + AJUSTE_CAEPF) % 100;
+        return Integer.parseInt(caepf.substring(12)) == esperado;
     }
 
     /**
@@ -113,39 +118,36 @@ public final class LcdprValidator {
     }
 
     private static String prefixoUf(String uf) {
-        if (uf == null) {
-            return null;
-        }
-        switch (uf.toUpperCase()) {
-            case "RO": return "11";
-            case "AC": return "12";
-            case "AM": return "13";
-            case "RR": return "14";
-            case "PA": return "15";
-            case "AP": return "16";
-            case "TO": return "17";
-            case "MA": return "21";
-            case "PI": return "22";
-            case "CE": return "23";
-            case "RN": return "24";
-            case "PB": return "25";
-            case "PE": return "26";
-            case "AL": return "27";
-            case "SE": return "28";
-            case "BA": return "29";
-            case "MG": return "31";
-            case "ES": return "32";
-            case "RJ": return "33";
-            case "SP": return "35";
-            case "PR": return "41";
-            case "SC": return "42";
-            case "RS": return "43";
-            case "MS": return "50";
-            case "MT": return "51";
-            case "GO": return "52";
-            case "DF": return "53";
-            default: return null;
-        }
+        return switch (uf.toUpperCase(Locale.ROOT)) {
+            case "RO" -> "11";
+            case "AC" -> "12";
+            case "AM" -> "13";
+            case "RR" -> "14";
+            case "PA" -> "15";
+            case "AP" -> "16";
+            case "TO" -> "17";
+            case "MA" -> "21";
+            case "PI" -> "22";
+            case "CE" -> "23";
+            case "RN" -> "24";
+            case "PB" -> "25";
+            case "PE" -> "26";
+            case "AL" -> "27";
+            case "SE" -> "28";
+            case "BA" -> "29";
+            case "MG" -> "31";
+            case "ES" -> "32";
+            case "RJ" -> "33";
+            case "SP" -> "35";
+            case "PR" -> "41";
+            case "SC" -> "42";
+            case "RS" -> "43";
+            case "MS" -> "50";
+            case "MT" -> "51";
+            case "GO" -> "52";
+            case "DF" -> "53";
+            default -> null;
+        };
     }
 
     private static boolean vazio(String valor) {
@@ -237,6 +239,16 @@ public final class LcdprValidator {
         }
         int resto = soma % MODULO_DV;
         return resto < 2 ? 0 : MODULO_DV - resto;
+    }
+
+    private static int digitoCaepf(String base) {
+        int soma = 0;
+        for (int i = 0; i < base.length(); i++) {
+            int peso = 9 - (i % 8);
+            soma += valorCaractere(base, base.length() - 1 - i) * peso;
+        }
+        int resto = soma % MODULO_DV;
+        return resto == 10 ? 0 : resto;
     }
 
     private static int valorCaractere(String texto, int indice) {

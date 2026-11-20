@@ -403,8 +403,11 @@ class LcdprValidatorTest {
     @Test
     @DisplayName("Validador utilitário de CAEPF confere dígitos válidos e inválidos")
     void shouldValidateCaepfCheckDigits() {
-        assertThat(LcdprValidator.caepfValido("29311861000172")).isTrue();
-        assertThat(LcdprValidator.caepfValido("29311861000173")).isFalse();
+        assertThat(LcdprValidator.caepfValido("29311861000184")).isTrue();
+        assertThat(LcdprValidator.caepfValido("46246258600298")).isTrue();
+        assertThat(LcdprValidator.caepfValido("29311861000172")).isFalse();
+        assertThat(LcdprValidator.caepfValido("29311861000185")).isFalse();
+        assertThat(LcdprValidator.caepfValido("2931186100018x")).isFalse();
         assertThat(LcdprValidator.caepfValido("00000000000000")).isFalse();
         assertThat(LcdprValidator.caepfValido("12345678901234")).isFalse();
         assertThat(LcdprValidator.caepfValido("123")).isFalse();
@@ -461,6 +464,26 @@ class LcdprValidatorTest {
                         new ErroValidacao(4, "0040", "CAEPF", "0040.CAEPF com dígito verificador inválido"),
                         new ErroValidacao(6, "0040", "CAEPF", "0040.CAEPF com dígito verificador inválido")
                 );
+    }
+
+    @Test
+    @DisplayName("Validação estrita ignora CAEPF vazio no 0040")
+    void shouldNotReportCaepfCheckDigitWhenCaepfIsEmpty() {
+        assertThat(LcdprValidator.validate(comImoveis(List.of(imovel(0), imovel(1).toBuilder().caepf("").build())), true))
+                .noneMatch(erro -> erro.linha() == 6
+                        && erro.mensagem().contains("dígito verificador"));
+    }
+
+    @Test
+    @DisplayName("Coerência de município não é verificada no 0030 quando UF ou município estão vazios")
+    void shouldSkipMunicipioCoherenceIn0030WhenUfOrMunicipioIsEmpty() {
+        Lcdpr semMunicipio = comDados(dadosValidos().toBuilder().uf("SP").codigoMunicipio("").build());
+        Lcdpr semUf = comDados(dadosValidos().toBuilder().uf("").codigoMunicipio("3550308").build());
+
+        assertThat(LcdprValidator.validate(semMunicipio))
+                .noneMatch(erro -> erro.mensagem().contains("incoerente com a UF"));
+        assertThat(LcdprValidator.validate(semUf))
+                .noneMatch(erro -> erro.mensagem().contains("incoerente com a UF"));
     }
 
     private static Lcdpr comBloco0(AberturaIdentificacao bloco0) {
