@@ -312,7 +312,7 @@ No JSON, os nomes dos campos são os do manual em minúsculas, e todos os valore
   - `DATA` do lançamento e `MES` do Q200 dentro do período da escrituração;
   - `VL_ENTRADA` e `VL_SAIDA` não podem ser maiores que zero no mesmo lançamento;
   - `QTD_LIN` informado, quando existir, igual ao calculado;
-  - conferência de DV do CAEPF sob demanda (via `LcdprValidator.validate(lcdpr, true)` ou `caepfValido(String)`).
+  - conferência de DV do CAEPF sob demanda (via `LcdprValidator.validate(lcdpr, true)` ou `caepfValido(String)`); o algoritmo é de fonte comunitária, não oficial.
 - **Cálculo do Q100:** os lançamentos saem em ordem de data. O saldo começa em zero no início do ano e é acumulado (entradas menos saídas). O `SLD_FIN` guarda o valor absoluto, e `NAT_SLD_FIN` é `P` ou `N`.
 - **Cálculo do Q200:** o Q200 cumulativo tem um registro por mês em que há lançamento, em ordem crescente. Cada `SLD_FIN` é o saldo do mês somado ao saldo final do mês anterior.
 
