@@ -7,11 +7,12 @@ Referência de exemplos: `C:\Users\fastw\DEV\hl7-handler\hl7-handler-examples`.
 ## 1. Objetivo
 
 1. **Validação do Dígito Verificador do CAEPF**:
-   - Disponibilizar método utilitário `LcdprValidator.caepfValido(String)` implementando o algoritmo Módulo 11 da RFB (14 dígitos: 9 base + 3 ordem + 2 DV com pesos 2 a 9).
-   - Validação integrada: como o exemplo fictício da RFB (`docs/leiaute/manual-de-preenchimento-do-lcdpr-1-3.pdf`, seção 3.5) utiliza o valor `12345678901234` com DV inválido, a validação de DV do CAEPF é aplicada quando ativada ou quando o CAEPF possui padrão numérico válido, evitando quebrar a amostra oficial do manual no modo padrão.
+   - Disponibilizar `LcdprValidator.caepfValido(String)`: 14 dígitos numéricos (CPF do titular, ordem de 3 dígitos e 2 DV).
+   - Algoritmo (fonte comunitária, sem documento oficial da RFB; ver pergunta P6 no roadmap): DV1 e DV2 por módulo 11 com pesos 9, 8, 7, 6, 5, 4, 3, 2, 9, 8, 7, 6, 5 a partir da unidade; resto 10 vira 0; o DV2 usa a base mais o DV1; o par final é `(DV1*10 + DV2 + 12) % 100`. Vetores: `29311861000184` e `46246258600298`.
+   - O exemplo do manual da RFB (`12345678901234`, seção 3.5) tem DV sintético; por isso a conferência só roda em `LcdprValidator.validate(lcdpr, true)`, e o modo padrão não a aplica. CAEPF vazio não é conferido.
 
 2. **Coerência Município IBGE × UF**:
-   - No `0030` e `0040`, quando `PAIS` for BR e `UF` e `COD_MUN` estiverem presentes:
+   - No `0030` e no `0040` (neste, apenas para imóvel no Brasil), quando `UF` e `COD_MUN` estiverem preenchidos:
    - Validar se os 2 primeiros dígitos do código de município IBGE (7 dígitos) correspondem à UF informada (ex: `SP` = 35, `MG` = 31, `DF` = 53, etc.).
 
 3. **Módulo `lcdpr-examples` (perfil `-Pexamples`)**:

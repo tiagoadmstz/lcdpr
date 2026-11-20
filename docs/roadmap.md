@@ -114,6 +114,7 @@ viram amostras em `src/test/resources/samples/`, com ida e volta
   - Validação de dígito verificador do CAEPF (`LcdprValidator.caepfValido`, `LcdprValidator.validate(..., estritoCaepf)`).
   - Validação de coerência entre código de município IBGE (7 dígitos) e a UF declarada em 0030 e 0040.
   - Criação do módulo de exemplos práticos `lcdpr-examples` com projetos Pure Java para Java 17 e Java 8 sob `-Pexamples`.
+- **Confirmar o DV do CAEPF (P6).** O algoritmo implementado (módulo 11, pesos 9 a 2 e ajuste +12) vem de fontes da comunidade, sem documento oficial da RFB. Confirmar com a RFB ou com um CAEPF real antes de recomendar o modo estrito.
 - **Responder P1 a P3.** P1: o Q200 sai só com os meses com lançamento, ou com os 12 meses do período? P2: qual encoding o programa da RFB aceita, UTF-8 ou ISO-8859-1? P3: o leiaute 1.3 continua vigente, ou saiu versão nova? Enquanto P1 e P2 estiverem em aberto, o README e o guia de migração descrevem o comportamento atual e apontam o ponto em aberto.
 - **Itens fora da 2.0/2.1:**
   - assinatura digital ICP-Brasil: não é escopo da biblioteca;
