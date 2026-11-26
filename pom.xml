@@ -46,7 +46,7 @@
         <revision>2.0.1-SNAPSHOT</revision>
         <lcdpr.module.name>io.github.tiagoadmstz.lcdpr</lcdpr.module.name>
         <jackson.version>3.3.0</jackson.version>
-        <jackson2.version>2.22.4</jackson2.version>
+        <jackson2.version>2.23.0</jackson2.version>
         <junit.jupiter.version>5.14.4</junit.jupiter.version>
         <assertj.version>3.27.7</assertj.version>
         <checkstyle.plugin.version>3.6.0</checkstyle.plugin.version>
